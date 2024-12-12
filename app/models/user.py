@@ -1,0 +1,26 @@
+import uuid
+
+from sqlmodel import Field, SQLModel
+
+
+# Shared properties
+class UserBase(SQLModel):
+    name: str = Field()
+    email: str = Field()
+    phone: str = Field()
+
+
+# Properties to receive on item creation
+class UserCreate(UserBase):
+    pass
+
+
+# Database model, database table inferred from class name
+class User(UserBase, table=True):
+    __tablename__ = "users"
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+
+
+# Properties to return via API, id is always required
+class UserPublic(UserBase):
+    id: uuid.UUID
