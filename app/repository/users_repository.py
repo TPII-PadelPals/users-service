@@ -2,7 +2,7 @@ import uuid
 from collections.abc import Sequence
 from typing import Any
 
-from sqlmodel import func, select
+from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.user import User, UserCreate
@@ -29,12 +29,11 @@ class UsersRepository:
         return user
 
     async def get_users(
-        self,
-    ) -> tuple[Sequence[User], int]:  # , skip: int = 0, limit: int = 100
-        count_statement = select(func.count()).select_from(User)
-        count = (await self.session.exec(count_statement)).one()
-        statement = select(User)  # .offset(skip).limit(limit)
+        self, skip: int = 0, limit: int = 100
+    ) -> tuple[Sequence[User], int]:
+        statement = select(User).offset(skip).limit(limit)
         items = (await self.session.exec(statement)).all()
+        count = len(items)
         return items, count
 
     async def get_user(self, public_id: uuid.UUID) -> User:
