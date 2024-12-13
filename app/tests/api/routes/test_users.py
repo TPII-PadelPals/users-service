@@ -168,7 +168,7 @@ async def test_read_users_skip_limit(
     assert content["count"] == limit
     assert len(content["data"]) == limit
     users = sorted(content["data"], key=lambda user: user["name"])
-    for user, user_data in zip(users, users_data[skip:limit], strict=False):
+    for user, user_data in zip(users, users_data[skip : skip + limit], strict=False):
         assert user["public_id"] == user_data["public_id"]
 
 

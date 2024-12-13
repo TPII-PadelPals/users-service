@@ -69,3 +69,25 @@ async def test_get_user_not_found(session: AsyncSession) -> None:
         raise ArithmeticError()
     except NotFoundException:
         assert True
+
+
+async def test_get_users(session: AsyncSession) -> None:
+    repo = UsersRepository(session)
+    skip = 1
+    limit = 2
+    users_created = []
+    for i in range(4):
+        user_create = UserCreate(
+            name=f"Name {i}", email=f"name-{i}@domain.com", phone=f"11 1111 {i:03}"
+        )
+        user_created = await repo.create_user(user_create)
+        users_created.append(user_created)
+    users_got, users_count = await repo.get_users(skip, limit)
+    users_got = sorted(users_got, key=lambda user: user.name)
+    assert users_count == limit
+    assert len(users_got) == limit
+    for user_got, user_created in zip(
+        users_got, users_created[skip : skip + limit], strict=False
+    ):
+        assert user_got.id == user_created.id
+        assert user_got.public_id == user_created.public_id
