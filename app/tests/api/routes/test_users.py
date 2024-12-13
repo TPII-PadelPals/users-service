@@ -170,3 +170,31 @@ async def test_read_users_skip_limit(
     users = sorted(content["data"], key=lambda user: user["name"])
     for user, user_data in zip(users, users_data[skip:limit], strict=False):
         assert user["public_id"] == user_data["public_id"]
+
+
+async def test_read_users_skip_limit_defaults(
+    async_client: AsyncClient, x_api_key_header: dict[str, str]
+) -> None:
+    skip = 0
+    limit = 100
+    users_data = []
+    for i in range(200):
+        data = {
+            "name": f"Name {i}",
+            "email": f"name-{i}@domain.com",
+            "phone": f"11 1111 {i:04}",
+        }
+        response = await async_client.post(
+            f"{settings.API_V1_STR}/users/", headers=x_api_key_header, json=data
+        )
+        users_data.append(response.json())
+    response = await async_client.get(
+        f"{settings.API_V1_STR}/users/", headers=x_api_key_header
+    )
+    assert response.status_code == 200
+    content = response.json()
+    assert content["count"] == limit
+    assert len(content["data"]) == limit
+    users = sorted(content["data"], key=lambda user: user["name"])
+    assert users[0]["public_id"] == users_data[skip]["public_id"]
+    assert users[-1]["public_id"] == users_data[limit - 1]["public_id"]

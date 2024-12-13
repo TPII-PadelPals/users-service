@@ -37,7 +37,7 @@ async def read_users(session: SessionDep, skip: int = 0, limit: int = 100) -> An
     Retrieve items.
     """
     repo = UsersRepository(session)
-    users, count = await repo.get_users(skip, limit)  # , skip, limit
+    users, count = await repo.get_users(skip, limit)
     return UsersPublic(data=users, count=count)
 
 
