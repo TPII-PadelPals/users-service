@@ -3,6 +3,7 @@ import uuid
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.user import User, UserCreate
+from app.utilities.exceptions import NotFoundException
 
 
 class UsersRepository:
@@ -19,6 +20,5 @@ class UsersRepository:
     async def get_user(self, id: uuid.UUID) -> User:
         user = await self.session.get(User, id)
         if not user:
-            raise IndexError()
-            # raise NotFoundException(item="Item")
+            raise NotFoundException(item="User")
         return user

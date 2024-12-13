@@ -1,4 +1,5 @@
-from fastapi import status
+import uuid
+
 from httpx import AsyncClient
 
 from app.core.config import settings
@@ -40,6 +41,18 @@ async def test_read_user(
     assert content["phone"] == data["phone"]
 
 
+async def test_read_user_not_found(
+    async_client: AsyncClient, x_api_key_header: dict[str, str]
+) -> None:
+    user_id = uuid.uuid4()
+    response = await async_client.get(
+        f"{settings.API_V1_STR}/users/{user_id}", headers=x_api_key_header
+    )
+    assert response.status_code == 404
+    content = response.json()
+    assert content["detail"] == "User not found"
+
+
 async def test_read_user_not_authorized(
     async_client: AsyncClient, x_api_key_header: dict[str, str]
 ) -> None:
@@ -54,6 +67,6 @@ async def test_read_user_not_authorized(
         f"{settings.API_V1_STR}/users/{user_id}",
         headers={"x-api-key": "wrong-key"},
     )
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+    assert response.status_code == 401
     content = response.json()
     assert content["detail"] == "Not Authorized"
