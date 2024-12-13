@@ -17,7 +17,7 @@ router = APIRouter()
     status_code=status.HTTP_201_CREATED,
     responses={**USER_RESPONSES},  # type: ignore[dict-item]
 )
-async def create_item(*, session: SessionDep, user_in: UserCreate) -> Any:
+async def create_user(*, session: SessionDep, user_in: UserCreate) -> Any:
     """
     Create new item.
     """
@@ -32,7 +32,7 @@ async def create_item(*, session: SessionDep, user_in: UserCreate) -> Any:
     status_code=status.HTTP_200_OK,
     responses={**USER_RESPONSES},  # type: ignore[dict-item]
 )
-async def read_items(session: SessionDep) -> Any:  # , skip: int = 0, limit: int = 100
+async def read_users(session: SessionDep) -> Any:  # , skip: int = 0, limit: int = 100
     """
     Retrieve items.
     """

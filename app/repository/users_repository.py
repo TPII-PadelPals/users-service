@@ -1,5 +1,6 @@
 import uuid
 from collections.abc import Sequence
+from typing import Any
 
 from sqlmodel import func, select
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -12,16 +13,16 @@ class UsersRepository:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-    async def _check_unique_email(self, email: str) -> None:
-        existing_email = (
-            await self.session.exec(select(User.email).where(User.email == email))
-        ).first()
-        if existing_email is not None:
-            raise NotUniqueError(item="Email")
+    async def _check_unique_attr(self, attr: Any, value: Any) -> None:
+        statement = select(getattr(User, attr)).where(getattr(User, attr) == value)
+        exists = (await self.session.exec(statement)).first() is not None
+        if exists:
+            raise NotUniqueError(item=attr.capitalize())
 
     async def create_user(self, user_in: UserCreate) -> User:
         user = User.model_validate(user_in)
-        await self._check_unique_email(user.email)
+        await self._check_unique_attr("email", user.email)
+        await self._check_unique_attr("phone", user.phone)
         self.session.add(user)
         await self.session.commit()
         await self.session.refresh(user)

@@ -20,19 +20,46 @@ async def test_create_user(
     assert content["phone"] == data["phone"]
 
 
-async def test_create_user_email_already_registered(
+async def test_create_user_email_already_exists(
     async_client: AsyncClient, x_api_key_header: dict[str, str]
 ) -> None:
-    data = {"name": "Name Surname", "email": "name@domain.com", "phone": "11 1234 1234"}
+    duplicated_email = "name@domain.com"
+    data = {"name": "Name Surname", "email": duplicated_email, "phone": "11 1111 1111"}
     await async_client.post(
         f"{settings.API_V1_STR}/users/", headers=x_api_key_header, json=data
     )
+    data = {"name": "Name Surname", "email": duplicated_email, "phone": "22 2222 2222"}
     response = await async_client.post(
         f"{settings.API_V1_STR}/users/", headers=x_api_key_header, json=data
     )
     assert response.status_code == 409
     content = response.json()
     assert content["detail"] == "Email already exists"
+
+
+async def test_create_user_phone_already_exists(
+    async_client: AsyncClient, x_api_key_header: dict[str, str]
+) -> None:
+    duplicated_phone = "11 1234 1234"
+    data = {
+        "name": "Name Surname",
+        "email": "name-1@domain.com",
+        "phone": duplicated_phone,
+    }
+    await async_client.post(
+        f"{settings.API_V1_STR}/users/", headers=x_api_key_header, json=data
+    )
+    data = {
+        "name": "Name Surname",
+        "email": "name-2@domain.com",
+        "phone": duplicated_phone,
+    }
+    response = await async_client.post(
+        f"{settings.API_V1_STR}/users/", headers=x_api_key_header, json=data
+    )
+    assert response.status_code == 409
+    content = response.json()
+    assert content["detail"] == "Phone already exists"
 
 
 async def test_read_user(

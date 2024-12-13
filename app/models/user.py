@@ -7,7 +7,7 @@ from sqlmodel import Field, Index, SQLModel
 class UserBase(SQLModel):
     name: str = Field()
     email: str = Field(unique=True)
-    phone: str = Field()
+    phone: str = Field(unique=True)
 
 
 # Properties to receive on item creation
