@@ -55,7 +55,7 @@ async def test_read_item_not_found(
     )
     assert response.status_code == 404
     content = response.json()
-    assert content["detail"] == "User not found"
+    assert content["detail"] == "Item not found"
 
 
 async def test_read_item_not_authorized(
