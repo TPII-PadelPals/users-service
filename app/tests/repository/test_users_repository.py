@@ -4,6 +4,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.user import UserCreate
 from app.repository.users_repository import UsersRepository
+from app.utilities.exceptions import NotUniqueError
 
 
 async def test_create_user(session: AsyncSession) -> None:
@@ -30,3 +31,16 @@ async def test_create_user_id_autoincremental(session: AsyncSession) -> None:
         user = await repo.create_user(user_create)
         assert user.id > last_user_id  # type: ignore[operator]
         last_user_id = user.id  # type: ignore[assignment]
+
+
+async def test_create_user_not_unique(session: AsyncSession) -> None:
+    repo = UsersRepository(session)
+    user_create = UserCreate(
+        name="Name Surname", email="name@domain.com", phone="11 1234 5678"
+    )
+    await repo.create_user(user_create)
+    try:
+        await repo.create_user(user_create)
+        raise AssertionError()
+    except NotUniqueError:
+        assert True
