@@ -44,3 +44,19 @@ async def test_create_user_not_unique(session: AsyncSession) -> None:
         raise AssertionError()
     except NotUniqueError:
         assert True
+
+
+async def test_get_user(session: AsyncSession) -> None:
+    repo = UsersRepository(session)
+    user_create = UserCreate(
+        name="Name Surname", email="name@domain.com", phone="11 1234 5678"
+    )
+
+    user_created = await repo.create_user(user_create)
+    user_got = await repo.get_user(user_created.public_id)
+
+    assert user_got.id == user_created.id
+    assert user_got.public_id == user_created.public_id
+    assert user_got.name == user_create.name
+    assert user_got.email == user_create.email
+    assert user_got.phone == user_create.phone
