@@ -5,15 +5,23 @@ from sqlmodel import func, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.user import User, UserCreate
-from app.utilities.exceptions import NotFoundException
+from app.utilities.exceptions import NotFoundException, NotUniqueError
 
 
 class UsersRepository:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
+    async def _check_unique_email(self, email: str) -> None:
+        existing_email = (
+            await self.session.exec(select(User.email).where(User.email == email))
+        ).first()
+        if existing_email is not None:
+            raise NotUniqueError(item="Email")
+
     async def create_user(self, user_in: UserCreate) -> User:
         user = User.model_validate(user_in)
+        await self._check_unique_email(user.email)
         self.session.add(user)
         await self.session.commit()
         await self.session.refresh(user)

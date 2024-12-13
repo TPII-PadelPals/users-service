@@ -20,6 +20,21 @@ async def test_create_user(
     assert content["phone"] == data["phone"]
 
 
+async def test_create_user_email_already_registered(
+    async_client: AsyncClient, x_api_key_header: dict[str, str]
+) -> None:
+    data = {"name": "Name Surname", "email": "name@domain.com", "phone": "11 1234 1234"}
+    await async_client.post(
+        f"{settings.API_V1_STR}/users/", headers=x_api_key_header, json=data
+    )
+    response = await async_client.post(
+        f"{settings.API_V1_STR}/users/", headers=x_api_key_header, json=data
+    )
+    assert response.status_code == 409
+    content = response.json()
+    assert content["detail"] == "Email already exists"
+
+
 async def test_read_user(
     async_client: AsyncClient, x_api_key_header: dict[str, str]
 ) -> None:

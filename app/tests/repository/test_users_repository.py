@@ -23,9 +23,9 @@ async def test_create_user(session: AsyncSession) -> None:
 async def test_create_user_id_autoincremental(session: AsyncSession) -> None:
     repo = UsersRepository(session)
     last_user_id = 0
-    for _ in range(3):
+    for i in range(3):
         user_create = UserCreate(
-            name="Name Surname", email="name@domain.com", phone="11 1234 5678"
+            name="Name Surname", email=f"name-{i}@domain.com", phone="11 1234 5678"
         )
         user = await repo.create_user(user_create)
         assert user.id > last_user_id  # type: ignore[operator]
