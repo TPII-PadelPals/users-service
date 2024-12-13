@@ -1,6 +1,6 @@
 import uuid
 
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Index, SQLModel
 
 
 # Shared properties
@@ -19,7 +19,9 @@ class UserCreate(UserBase):
 class User(UserBase, table=True):
     __tablename__ = "users"
     id: int | None = Field(default=None, primary_key=True)
-    public_id: uuid.UUID = Field(default_factory=uuid.uuid4, unique=True, index=True)
+    public_id: uuid.UUID = Field(default_factory=uuid.uuid4, unique=True)
+
+    __table_args__ = (Index("id", "public_id"),)
 
 
 # Properties to return via API, id is always required
