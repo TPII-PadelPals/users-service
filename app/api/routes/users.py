@@ -3,10 +3,10 @@ from typing import Any
 
 from fastapi import APIRouter, status
 
-from app.models.user import UserCreate, UserPublic
+from app.models.user import UserCreate, UserPublic, UsersPublic
 from app.repository.users_repository import UsersRepository
 from app.utilities.dependencies import SessionDep
-from app.utilities.messages import NOT_ENOUGH_PERMISSIONS
+from app.utilities.messages import USER_RESPONSES
 
 router = APIRouter()
 
@@ -15,7 +15,7 @@ router = APIRouter()
     "/",
     response_model=UserPublic,
     status_code=status.HTTP_201_CREATED,
-    responses={**NOT_ENOUGH_PERMISSIONS},  # type: ignore[dict-item]
+    responses={**USER_RESPONSES},  # type: ignore[dict-item]
 )
 async def create_item(*, session: SessionDep, user_in: UserCreate) -> Any:
     """
@@ -27,10 +27,25 @@ async def create_item(*, session: SessionDep, user_in: UserCreate) -> Any:
 
 
 @router.get(
+    "/",
+    response_model=UsersPublic,
+    status_code=status.HTTP_200_OK,
+    responses={**USER_RESPONSES},  # type: ignore[dict-item]
+)
+async def read_items(session: SessionDep) -> Any:  # , skip: int = 0, limit: int = 100
+    """
+    Retrieve items.
+    """
+    repo = UsersRepository(session)
+    users, count = await repo.get_users()  # , skip, limit
+    return UsersPublic(data=users, count=count)
+
+
+@router.get(
     "/{id}",
     response_model=UserPublic,
     status_code=status.HTTP_200_OK,
-    responses={**NOT_ENOUGH_PERMISSIONS},  # type: ignore[dict-item]
+    responses={**USER_RESPONSES},  # type: ignore[dict-item]
 )
 async def read_user(session: SessionDep, id: uuid.UUID) -> Any:
     """

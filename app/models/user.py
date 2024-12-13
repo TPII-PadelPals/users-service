@@ -24,3 +24,8 @@ class User(UserBase, table=True):
 # Properties to return via API, id is always required
 class UserPublic(UserBase):
     id: uuid.UUID
+
+
+class UsersPublic(SQLModel):
+    data: list[UserPublic]
+    count: int

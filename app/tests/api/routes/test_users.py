@@ -70,3 +70,31 @@ async def test_read_user_not_authorized(
     assert response.status_code == 401
     content = response.json()
     assert content["detail"] == "Not Authorized"
+
+
+async def test_read_users(
+    async_client: AsyncClient, x_api_key_header: dict[str, str]
+) -> None:
+    users_data = []
+    for i in range(2):
+        data = {
+            "name": f"Name {i}",
+            "email": f"name-{i}@domain.com",
+            "phone": f"{i}{i} {i}{i}{i}{i} {i}{i}{i}{i}",
+        }
+        response = await async_client.post(
+            f"{settings.API_V1_STR}/users/", headers=x_api_key_header, json=data
+        )
+        users_data.append(response.json())
+
+    response = await async_client.get(
+        f"{settings.API_V1_STR}/users/",
+        headers=x_api_key_header,
+    )
+    assert response.status_code == 200
+    content = response.json()
+    assert content["count"] == 2
+    assert len(content["data"]) == 2
+    users = sorted(content["data"], key=lambda user: user["name"])
+    for user, user_data in zip(users, users_data, strict=False):
+        assert user["id"] == user_data["id"]
