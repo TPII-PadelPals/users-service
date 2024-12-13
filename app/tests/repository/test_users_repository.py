@@ -4,7 +4,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.user import UserCreate
 from app.repository.users_repository import UsersRepository
-from app.utilities.exceptions import NotUniqueError
+from app.utilities.exceptions import NotFoundException, NotUniqueError
 
 
 async def test_create_user(session: AsyncSession) -> None:
@@ -60,3 +60,12 @@ async def test_get_user(session: AsyncSession) -> None:
     assert user_got.name == user_create.name
     assert user_got.email == user_create.email
     assert user_got.phone == user_create.phone
+
+
+async def test_get_user_not_found(session: AsyncSession) -> None:
+    repo = UsersRepository(session)
+    try:
+        await repo.get_user(uuid.uuid4())
+        raise ArithmeticError()
+    except NotFoundException:
+        assert True
