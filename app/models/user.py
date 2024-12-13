@@ -18,12 +18,13 @@ class UserCreate(UserBase):
 # Database model, database table inferred from class name
 class User(UserBase, table=True):
     __tablename__ = "users"
-    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    id: int | None = Field(default=None, primary_key=True)
+    public_id: uuid.UUID = Field(default_factory=uuid.uuid4, index=True)
 
 
 # Properties to return via API, id is always required
 class UserPublic(UserBase):
-    id: uuid.UUID
+    public_id: uuid.UUID
 
 
 class UsersPublic(SQLModel):

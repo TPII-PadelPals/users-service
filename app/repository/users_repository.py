@@ -28,8 +28,10 @@ class UsersRepository:
         items = (await self.session.exec(statement)).all()
         return items, count
 
-    async def get_user(self, id: uuid.UUID) -> User:
-        user = await self.session.get(User, id)
+    async def get_user(self, public_id: uuid.UUID) -> User:
+        statement = select(User).where(User.public_id == public_id)
+        result = await self.session.exec(statement)
+        user = result.first()
         if not user:
             raise NotFoundException(item="User")
         return user

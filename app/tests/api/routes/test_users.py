@@ -14,10 +14,10 @@ async def test_create_user(
     )
     assert response.status_code == 201
     content = response.json()
+    assert "public_id" in content
     assert content["name"] == data["name"]
     assert content["email"] == data["email"]
     assert content["phone"] == data["phone"]
-    assert "id" in content
 
 
 async def test_read_user(
@@ -28,14 +28,14 @@ async def test_read_user(
         f"{settings.API_V1_STR}/users/", headers=x_api_key_header, json=data
     )
     content = response.json()
-    user_id = content["id"]
+    user_id = content["public_id"]
 
     response = await async_client.get(
         f"{settings.API_V1_STR}/users/{user_id}", headers=x_api_key_header
     )
     assert response.status_code == 200
     content = response.json()
-    assert content["id"] == user_id
+    assert content["public_id"] == user_id
     assert content["name"] == data["name"]
     assert content["email"] == data["email"]
     assert content["phone"] == data["phone"]
@@ -61,7 +61,7 @@ async def test_read_user_not_authorized(
         f"{settings.API_V1_STR}/users/", headers=x_api_key_header, json=data
     )
     content = response.json()
-    user_id = content["id"]
+    user_id = content["public_id"]
 
     response = await async_client.get(
         f"{settings.API_V1_STR}/users/{user_id}",
@@ -97,4 +97,4 @@ async def test_read_users(
     assert len(content["data"]) == 2
     users = sorted(content["data"], key=lambda user: user["name"])
     for user, user_data in zip(users, users_data, strict=False):
-        assert user["id"] == user_data["id"]
+        assert user["public_id"] == user_data["public_id"]
