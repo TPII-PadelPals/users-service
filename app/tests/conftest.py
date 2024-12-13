@@ -23,9 +23,8 @@ async def db() -> AsyncGenerator[AsyncSession, None]:
     async with AsyncSession(get_async_engine(db_url)) as session:
         await init_db(db_url)
         yield session
-        statement = delete(Item)
-        statement = delete(User)
-        await session.exec(statement)  # type: ignore[call-overload]
+        await session.exec(delete(Item))  # type: ignore[call-overload]
+        await session.exec(delete(User))  # type: ignore[call-overload]
         await session.commit()
 
 
