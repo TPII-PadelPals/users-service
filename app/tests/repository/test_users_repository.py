@@ -4,7 +4,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.user import UserCreate
 from app.repository.users_repository import UsersRepository
-from app.utilities.exceptions import NotFoundException, NotUniqueError
+from app.utilities.exceptions import NotFoundException, NotUniqueException
 
 
 async def test_create_user(session: AsyncSession) -> None:
@@ -42,7 +42,7 @@ async def test_create_user_not_unique(session: AsyncSession) -> None:
     try:
         await repo.create_user(user_create)
         raise AssertionError()
-    except NotUniqueError:
+    except NotUniqueException:
         assert True
 
 

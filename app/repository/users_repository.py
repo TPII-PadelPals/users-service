@@ -6,7 +6,7 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.user import User, UserCreate
-from app.utilities.exceptions import NotFoundException, NotUniqueError
+from app.utilities.exceptions import NotFoundException, NotUniqueException
 
 
 class UsersRepository:
@@ -17,7 +17,7 @@ class UsersRepository:
         statement = select(getattr(User, attr)).where(getattr(User, attr) == value)
         exists = (await self.session.exec(statement)).first() is not None
         if exists:
-            raise NotUniqueError(item=attr.capitalize())
+            raise NotUniqueException(item=attr.capitalize())
 
     async def create_user(self, user_in: UserCreate) -> User:
         user = User.model_validate(user_in)
