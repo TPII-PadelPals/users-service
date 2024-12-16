@@ -14,9 +14,10 @@ class UsersRepository:
         self.session = session
 
     async def _check_unique_attr(self, attr: Any, value: Any) -> None:
-        statement = select(getattr(User, attr)).where(getattr(User, attr) == value)
-        exists = (await self.session.exec(statement)).first() is not None
-        if exists:
+        user_attr = getattr(User, attr)
+        statement = select(user_attr).where(user_attr == value)
+        attr_exist = (await self.session.exec(statement)).first()
+        if attr_exist:
             raise NotUniqueException(item=attr.capitalize())
 
     async def create_user(self, user_in: UserCreate) -> User:
