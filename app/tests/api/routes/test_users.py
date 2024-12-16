@@ -48,7 +48,7 @@ async def test_create_user_name_max_length_is_255(
     assert content["detail"][0]["msg"] == "String should have at most 255 characters"
 
 
-async def test_create_user_email_already_exists(
+async def test_create_user_email_already_exists_responds_409(
     async_client: AsyncClient, x_api_key_header: dict[str, str]
 ) -> None:
     duplicated_email = "name@domain.com"
@@ -65,7 +65,7 @@ async def test_create_user_email_already_exists(
     assert content["detail"] == "Email already exists"
 
 
-async def test_create_user_phone_already_exists(
+async def test_create_user_phone_already_exists_responds_409(
     async_client: AsyncClient, x_api_key_header: dict[str, str]
 ) -> None:
     duplicated_phone = "11 1234 1234"

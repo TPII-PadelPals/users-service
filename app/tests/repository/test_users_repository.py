@@ -1,5 +1,6 @@
 import uuid
 
+import pytest
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.user import UserCreate
@@ -33,17 +34,42 @@ async def test_create_user_id_autoincremental(session: AsyncSession) -> None:
         last_user_id = user.id  # type: ignore[assignment]
 
 
-async def test_create_user_not_unique(session: AsyncSession) -> None:
+async def test_create_user_email_already_exists_raises_exception(
+    session: AsyncSession,
+) -> None:
     repo = UsersRepository(session)
+
+    email = "name@domain.com"
+
+    user_create = UserCreate(name="Name Surname", email=email, phone="11 1111 1111")
+    await repo.create_user(user_create)
+
+    with pytest.raises(NotUniqueException) as e:
+        user_create = UserCreate(name="Name Surname", email=email, phone="11 2222 2222")
+        await repo.create_user(user_create)
+
+    assert e.value.detail == "Email already exists"
+
+
+async def test_create_user_phone_already_exists_raises_exception(
+    session: AsyncSession,
+) -> None:
+    repo = UsersRepository(session)
+
+    phone = "11 1111 1111"
+
     user_create = UserCreate(
-        name="Name Surname", email="name@domain.com", phone="11 1234 5678"
+        name="Name Surname", email="name-1@domain.com", phone=phone
     )
     await repo.create_user(user_create)
-    try:
+
+    with pytest.raises(NotUniqueException) as e:
+        user_create = UserCreate(
+            name="Name Surname", email="name-2@domain.com", phone=phone
+        )
         await repo.create_user(user_create)
-        raise AssertionError()
-    except NotUniqueException:
-        assert True
+
+    assert e.value.detail == "Phone already exists"
 
 
 async def test_get_user(session: AsyncSession) -> None:
