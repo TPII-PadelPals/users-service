@@ -168,6 +168,9 @@ async def test_read_users(
     users = sorted(content["data"], key=lambda user: user["name"])
     for user, user_data in zip(users, users_data, strict=False):
         assert user["public_id"] == user_data["public_id"]
+        assert user["name"] == user_data["name"]
+        assert user["email"] == user_data["email"]
+        assert user["phone"] == user_data["phone"]
 
 
 async def test_read_users_skip_limit(
@@ -198,6 +201,9 @@ async def test_read_users_skip_limit(
     users = sorted(content["data"], key=lambda user: user["name"])
     for user, user_data in zip(users, users_data[skip : skip + limit], strict=False):
         assert user["public_id"] == user_data["public_id"]
+        assert user["name"] == user_data["name"]
+        assert user["email"] == user_data["email"]
+        assert user["phone"] == user_data["phone"]
 
 
 async def test_read_users_skip_limit_defaults(
