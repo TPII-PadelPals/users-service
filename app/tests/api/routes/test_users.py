@@ -20,10 +20,11 @@ async def test_create_user(
     assert content["phone"] == data["phone"]
 
 
-async def test_create_user_name_min_length_is_one(
+async def test_create_user_name_min_length_is_1(
     async_client: AsyncClient, x_api_key_header: dict[str, str]
 ) -> None:
-    data = {"name": "", "email": "name@domain.com", "phone": "11 1111 1111"}
+    name = ""
+    data = {"name": name, "email": "name@domain.com", "phone": "11 1111 1111"}
     response = await async_client.post(
         f"{settings.API_V1_STR}/users/", headers=x_api_key_header, json=data
     )
@@ -31,6 +32,20 @@ async def test_create_user_name_min_length_is_one(
     content = response.json()
     assert content["detail"][0]["loc"] == ["body", "name"]
     assert content["detail"][0]["msg"] == "String should have at least 1 character"
+
+
+async def test_create_user_name_max_length_is_255(
+    async_client: AsyncClient, x_api_key_header: dict[str, str]
+) -> None:
+    name = "a" * 256
+    data = {"name": name, "email": "name@domain.com", "phone": "11 1111 1111"}
+    response = await async_client.post(
+        f"{settings.API_V1_STR}/users/", headers=x_api_key_header, json=data
+    )
+    assert response.status_code == 422
+    content = response.json()
+    assert content["detail"][0]["loc"] == ["body", "name"]
+    assert content["detail"][0]["msg"] == "String should have at most 255 characters"
 
 
 async def test_create_user_email_already_exists(

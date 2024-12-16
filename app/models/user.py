@@ -5,7 +5,7 @@ from sqlmodel import Field, Index, SQLModel
 
 # Shared properties
 class UserBase(SQLModel):
-    name: str = Field(min_length=1)
+    name: str = Field(min_length=1, max_length=255)
     email: str = Field(unique=True)
     phone: str = Field(unique=True)
 
