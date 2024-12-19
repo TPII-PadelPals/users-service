@@ -15,8 +15,6 @@ router = APIRouter()
 
 @router.get("/auth")
 async def google_auth(request: Request) -> Any:
-    # async def google_auth(chat_id: str) -> Any:
-    # print("ZARLANGA")
     chat_id = request.query_params.get("chat_id")
     if not chat_id:
         raise HTTPException(status_code=400, detail="Chat ID is required")
