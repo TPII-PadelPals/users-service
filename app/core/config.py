@@ -1,5 +1,6 @@
 from typing import Literal
 
+from authlib.integrations.starlette_client import OAuth  # type: ignore
 from pydantic import (
     computed_field,
 )
@@ -25,6 +26,13 @@ class Settings(BaseSettings):
     POSTGRES_DB_TESTING: str
     API_KEY: str
 
+    # Telegram Bot
+    TELEGRAM_BOT_USERNAME: str
+
+    # Google Services
+    GOOGLE_CLIENT_ID: str
+    GOOGLE_CLIENT_SECRET: str
+
     # Services
     ITEMS_SERVICE_HOST: str
     ITEMS_SERVICE_PORT: int | None = None
@@ -41,6 +49,11 @@ class Settings(BaseSettings):
             port=self.POSTGRES_PORT,
             path=self.POSTGRES_DB,
         )
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def TELEGRAM_PATH(self) -> str:
+        return f"tg://resolve?domain={self.TELEGRAM_BOT_USERNAME}"
 
 
 class TestSettings(Settings):
@@ -60,3 +73,12 @@ class TestSettings(Settings):
 settings = Settings()  # type: ignore[call-arg]
 
 test_settings = TestSettings()  # type: ignore[call-arg]
+
+oauth = OAuth()
+oauth.register(
+    name="google",
+    client_id=settings.GOOGLE_CLIENT_ID,
+    client_secret=settings.GOOGLE_CLIENT_SECRET,
+    server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
+    client_kwargs={"scope": "openid email profile"},
+)
