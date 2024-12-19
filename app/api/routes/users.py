@@ -11,6 +11,12 @@ from app.utilities.messages import USER_RESPONSES
 router = APIRouter()
 
 
+async def _create_user(session: SessionDep, user_in: UserCreate) -> Any:
+    repo = UsersRepository(session)
+    user = await repo.create_user(user_in)
+    return user
+
+
 @router.post(
     "/",
     response_model=UserPublic,
@@ -21,9 +27,7 @@ async def create_user(*, session: SessionDep, user_in: UserCreate) -> Any:
     """
     Create new item.
     """
-    repo = UsersRepository(session)
-    user = await repo.create_user(user_in)
-    return user
+    return await _create_user(session, user_in)
 
 
 @router.get(
