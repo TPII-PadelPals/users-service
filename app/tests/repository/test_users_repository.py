@@ -22,12 +22,33 @@ async def test_create_user(session: AsyncSession) -> None:
     assert user.phone == user_create.phone
 
 
+async def test_create_user_may_contain_telegram_id(session: AsyncSession) -> None:
+    repo = UsersRepository(session)
+    user_create = UserCreate(
+        name="Name Surname", email="name-1@domain.com", phone="11 1111 1111"
+    )
+    user = await repo.create_user(user_create)
+    assert user.telegram_id is None
+
+    user_create = UserCreate(
+        name="Name Surname",
+        email="name-2@domain.com",
+        phone="11 1111 2222",
+        telegram_id="123456789",
+    )
+    user = await repo.create_user(user_create)
+    assert user.telegram_id == user_create.telegram_id
+
+
 async def test_create_user_id_autoincremental(session: AsyncSession) -> None:
     repo = UsersRepository(session)
     last_user_id = 0
     for i in range(3):
         user_create = UserCreate(
-            name="Name Surname", email=f"name-{i}@domain.com", phone=f"11 1111 111{i}"
+            name="Name Surname",
+            email=f"name-{i}@domain.com",
+            phone=f"11 1111 111{i}",
+            telegram_id=123456789,
         )
         user = await repo.create_user(user_create)
         assert user.id > last_user_id  # type: ignore[operator]
