@@ -2,7 +2,7 @@
 from typing import Any
 
 from authlib.integrations.starlette_client import OAuth  # type: ignore
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request, status
 from fastapi.responses import HTMLResponse
 
 # from starlette.config import Config
@@ -10,6 +10,8 @@ from app.api.routes.users import _create_user
 from app.core.config import settings
 from app.models.user import UserCreate
 from app.utilities.dependencies import SessionDep
+from app.utilities.exceptions import MissingFieldException
+from app.utilities.messages import GOOGLE_RESPONSES
 
 router = APIRouter()
 
@@ -23,17 +25,21 @@ oauth.register(
 )
 
 
+@router.get(
+    "/auth",
+    status_code=status.HTTP_200_OK,
+    responses={**GOOGLE_RESPONSES},  # type: ignore[dict-item]
+)
+async def google_auth(request: Request) -> Any:
+    return await google_auth_inner(request, oauth)
+
+
 async def google_auth_inner(request: Any, oauth: Any) -> Any:
     chat_id = request.query_params.get("chat_id")
     if not chat_id:
-        raise HTTPException(status_code=400, detail="Chat ID is required")
+        raise MissingFieldException(detail="Chat ID is required")
     redirect_uri = request.url_for("google_auth_callback")
     return await oauth.google.authorize_redirect(request, redirect_uri, state=chat_id)
-
-
-@router.get("/auth")
-async def google_auth(request: Request) -> Any:
-    return await google_auth_inner(request, oauth)
 
 
 @router.get("/auth/callback", response_class=HTMLResponse, name="google_auth_callback")
