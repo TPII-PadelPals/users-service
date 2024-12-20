@@ -2,7 +2,7 @@
 from typing import Any
 
 from authlib.integrations.starlette_client import OAuth  # type: ignore
-from fastapi import APIRouter, HTTPException, Request, status
+from fastapi import APIRouter, Request, status
 from fastapi.responses import HTMLResponse
 
 # from starlette.config import Config
@@ -44,28 +44,31 @@ async def google_auth_inner(request: Any, oauth: Any) -> Any:
 
 @router.get("/auth/callback", response_class=HTMLResponse, name="google_auth_callback")
 async def google_auth_callback(request: Request, session: SessionDep) -> Any:
-    # chat_id = request.query_params.get("state")
+    return await google_auth_callback_inner(request, session, oauth)
+
+
+async def google_auth_callback_inner(
+    request: Any, session: SessionDep, oauth: Any
+) -> Any:
+    chat_id = request.query_params.get("state")
     token = await oauth.google.authorize_access_token(request)
     user_info = token["userinfo"]
     user_create = UserCreate(
-        # chat_id=chat_id,
         name=user_info["name"],
         email=user_info["email"],
         phone="",
+        telegram_id=chat_id,
     )
-    try:
-        await _create_user(session, user_create)
-        button_onclick = f"window.location.href='{settings.TELEGRAM_PATH}'"
-        return f"""
-        <html>
-            <head>
-                <title>Registro exitoso</title>
-            </head>
-            <body>
-                <h1>Registro exitoso!</h1>
-                <button onclick="{button_onclick}">Volver a telegram</button>
-            </body>
-        </html>
-        """
-    except Exception as e:
-        raise HTTPException(status_code=409, detail=str(e))
+    await _create_user(session, user_create)
+    button_onclick = f"window.location.href='{settings.TELEGRAM_PATH}'"
+    return f"""
+    <html>
+        <head>
+            <title>Registro exitoso</title>
+        </head>
+        <body>
+            <h1>Registro exitoso!</h1>
+            <button onclick="{button_onclick}">Volver a telegram</button>
+        </body>
+    </html>
+    """
