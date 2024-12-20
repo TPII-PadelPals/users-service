@@ -108,11 +108,8 @@ async def test_get_user(session: AsyncSession) -> None:
 
 async def test_get_user_not_found(session: AsyncSession) -> None:
     repo = UsersRepository(session)
-    try:
+    with pytest.raises(NotFoundException):
         await repo.get_user(uuid.uuid4())
-        raise ArithmeticError()
-    except NotFoundException:
-        assert True
 
 
 async def test_get_users(session: AsyncSession) -> None:
