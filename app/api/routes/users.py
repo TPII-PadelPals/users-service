@@ -36,12 +36,14 @@ async def create_user_inner(session: SessionDep, user_in: UserCreate) -> Any:
     status_code=status.HTTP_200_OK,
     responses={**USER_RESPONSES},  # type: ignore[dict-item]
 )
-async def read_users(session: SessionDep, skip: int = 0, limit: int = 100) -> Any:  #
+async def read_users(
+    session: SessionDep, telegram_id: str | None = None, skip: int = 0, limit: int = 100
+) -> Any:  #
     """
     Retrieve users.
     """
     repo = UsersRepository(session)
-    users, count = await repo.get_users(skip, limit)
+    users, count = await repo.get_users(telegram_id, skip, limit)
     return UsersPublic(data=users, count=count)
 
 

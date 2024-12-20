@@ -126,7 +126,7 @@ async def test_get_users(session: AsyncSession) -> None:
         )
         user_created = await repo.create_user(user_create)
         users_created.append(user_created)
-    users_got, users_count = await repo.get_users(skip, limit)
+    users_got, users_count = await repo.get_users(skip=skip, limit=limit)
     users_got = sorted(users_got, key=lambda user: user.name)
     assert users_count == limit
     assert len(users_got) == limit
