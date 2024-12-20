@@ -39,7 +39,7 @@ async def test_google_auth_inner_without_chat_id_raises_exception(mocker: Any) -
     with pytest.raises(MissingFieldException) as e:
         await google_auth_inner(request_mock, oauth_mock)
 
-        assert e.value.detail == "Chat ID is required"
+    assert e.value.detail == "Chat ID is required"
 
 
 async def test_google_auth_callback_inner(session: AsyncSession, mocker: Any) -> None:
