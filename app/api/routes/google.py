@@ -29,8 +29,6 @@ async def google_auth(request: Request) -> Any:
     if not chat_id:
         raise HTTPException(status_code=400, detail="Chat ID is required")
     redirect_uri = request.url_for("google_auth_callback")
-    print(f"chat_id: {chat_id}, redirect_uri: {redirect_uri}")
-    print(f"oauth: {oauth.google}")
     return await oauth.google.authorize_redirect(request, redirect_uri, state=chat_id)
 
 
@@ -47,8 +45,6 @@ async def google_auth_callback(request: Request, session: SessionDep) -> Any:
     )
     try:
         await _create_user(session, user_create)
-        # telegram_path = f'tg://resolve?domain={os.getenv("TELEGRAM_BOT_USERNAME")}'
-        # button_onclick = f"window.location.href='{telegram_path}'"
         button_onclick = f"window.location.href='{settings.TELEGRAM_PATH}'"
         return f"""
         <html>
