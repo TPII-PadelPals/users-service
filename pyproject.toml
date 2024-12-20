@@ -16,6 +16,7 @@ dependencies = [
     "starlette>=0.41.2",
     "authlib>=1.3.2",
     "itsdangerous>=2.2.0",
+    "pytest-mock>=3.14.0",
 ]
 
 [tool.uv]
