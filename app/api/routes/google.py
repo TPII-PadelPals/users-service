@@ -1,16 +1,26 @@
 # import os
 from typing import Any
 
+from authlib.integrations.starlette_client import OAuth  # type: ignore
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 
 # from starlette.config import Config
 from app.api.routes.users import _create_user
-from app.core.config import oauth, settings
+from app.core.config import settings
 from app.models.user import UserCreate
 from app.utilities.dependencies import SessionDep
 
 router = APIRouter()
+
+oauth = OAuth()
+oauth.register(
+    name="google",
+    client_id=settings.GOOGLE_CLIENT_ID,
+    client_secret=settings.GOOGLE_CLIENT_SECRET,
+    server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
+    client_kwargs={"scope": "openid email profile"},
+)
 
 
 @router.get("/auth")
@@ -33,6 +43,7 @@ async def google_auth_callback(request: Request, session: SessionDep) -> Any:
         # chat_id=chat_id,
         name=user_info["name"],
         email=user_info["email"],
+        phone="",
     )
     try:
         await _create_user(session, user_create)

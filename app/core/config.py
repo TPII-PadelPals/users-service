@@ -1,6 +1,5 @@
 from typing import Literal
 
-from authlib.integrations.starlette_client import OAuth  # type: ignore
 from pydantic import (
     computed_field,
 )
@@ -73,12 +72,3 @@ class TestSettings(Settings):
 settings = Settings()  # type: ignore[call-arg]
 
 test_settings = TestSettings()  # type: ignore[call-arg]
-
-oauth = OAuth()
-oauth.register(
-    name="google",
-    client_id=settings.GOOGLE_CLIENT_ID,
-    client_secret=settings.GOOGLE_CLIENT_SECRET,
-    server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
-    client_kwargs={"scope": "openid email profile"},
-)
