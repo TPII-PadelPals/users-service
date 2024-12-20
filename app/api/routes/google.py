@@ -23,13 +23,17 @@ oauth.register(
 )
 
 
-@router.get("/auth")
-async def google_auth(request: Request) -> Any:
+async def google_auth_inner(request: Any, oauth: Any) -> Any:
     chat_id = request.query_params.get("chat_id")
     if not chat_id:
         raise HTTPException(status_code=400, detail="Chat ID is required")
     redirect_uri = request.url_for("google_auth_callback")
     return await oauth.google.authorize_redirect(request, redirect_uri, state=chat_id)
+
+
+@router.get("/auth")
+async def google_auth(request: Request) -> Any:
+    return await google_auth_inner(request, oauth)
 
 
 @router.get("/auth/callback", response_class=HTMLResponse, name="google_auth_callback")
