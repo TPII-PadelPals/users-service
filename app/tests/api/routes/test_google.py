@@ -1,6 +1,9 @@
 from typing import Any
 
+import pytest
+
 from app.api.routes.google import google_auth_inner
+from app.utilities.exceptions import MissingFieldException
 
 
 async def test_google_auth_inner(mocker: Any) -> None:
@@ -21,3 +24,16 @@ async def test_google_auth_inner(mocker: Any) -> None:
     oauth_mock.google.authorize_redirect.assert_called_once_with(
         request_mock, redirect_uri, state=chat_id
     )
+
+
+async def test_google_auth_inner_without_chat_id_raises_exception(mocker: Any) -> None:
+    request_mock = mocker.Mock()
+    request_mock.query_params = mocker.Mock()
+    request_mock.query_params.get = lambda _: None
+
+    oauth_mock = mocker.Mock()
+
+    with pytest.raises(MissingFieldException) as e:
+        await google_auth_inner(request_mock, oauth_mock)
+
+        assert e.value.detail == "Chat ID is required"
