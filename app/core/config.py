@@ -29,6 +29,7 @@ class Settings(BaseSettings):
     TELEGRAM_BOT_USERNAME: str
 
     # Google Services
+    MIDDLEWARE_KEY: str
     GOOGLE_CLIENT_ID: str
     GOOGLE_CLIENT_SECRET: str
 

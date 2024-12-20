@@ -28,7 +28,7 @@ app = FastAPI(
 )
 
 # Add the SessionMiddleware
-app.add_middleware(SessionMiddleware, secret_key="")
+app.add_middleware(SessionMiddleware, secret_key=settings.MIDDLEWARE_KEY)
 
 # Register routes
 app.include_router(api_router_open, prefix=settings.API_V1_STR)
