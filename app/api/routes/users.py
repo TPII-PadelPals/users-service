@@ -11,12 +11,6 @@ from app.utilities.messages import USER_RESPONSES
 router = APIRouter()
 
 
-async def _create_user(session: SessionDep, user_in: UserCreate) -> Any:
-    repo = UsersRepository(session)
-    user = await repo.create_user(user_in)
-    return user
-
-
 @router.post(
     "/",
     response_model=UserPublic,
@@ -25,9 +19,15 @@ async def _create_user(session: SessionDep, user_in: UserCreate) -> Any:
 )
 async def create_user(*, session: SessionDep, user_in: UserCreate) -> Any:
     """
-    Create new item.
+    Create new user.
     """
-    return await _create_user(session, user_in)
+    return await create_user_inner(session, user_in)
+
+
+async def create_user_inner(session: SessionDep, user_in: UserCreate) -> Any:
+    repo = UsersRepository(session)
+    user = await repo.create_user(user_in)
+    return user
 
 
 @router.get(
@@ -38,7 +38,7 @@ async def create_user(*, session: SessionDep, user_in: UserCreate) -> Any:
 )
 async def read_users(session: SessionDep, skip: int = 0, limit: int = 100) -> Any:  #
     """
-    Retrieve items.
+    Retrieve users.
     """
     repo = UsersRepository(session)
     users, count = await repo.get_users(skip, limit)
@@ -53,7 +53,7 @@ async def read_users(session: SessionDep, skip: int = 0, limit: int = 100) -> An
 )
 async def read_user(session: SessionDep, id: uuid.UUID) -> Any:
     """
-    Get item by ID.
+    Get user by public ID.
     """
     repo = UsersRepository(session)
     user = await repo.get_user(id)

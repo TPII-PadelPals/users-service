@@ -5,8 +5,7 @@ from authlib.integrations.starlette_client import OAuth  # type: ignore
 from fastapi import APIRouter, Request, status
 from fastapi.responses import HTMLResponse
 
-# from starlette.config import Config
-from app.api.routes.users import _create_user
+from app.api.routes.users import create_user_inner
 from app.core.config import settings
 from app.models.user import UserCreate
 from app.utilities.dependencies import SessionDep
@@ -59,7 +58,7 @@ async def google_auth_callback_inner(
         phone="",
         telegram_id=chat_id,
     )
-    await _create_user(session, user_create)
+    await create_user_inner(session, user_create)
     button_onclick = f"window.location.href='{settings.TELEGRAM_PATH}'"
     return f"""
     <html>
