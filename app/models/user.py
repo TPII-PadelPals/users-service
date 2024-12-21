@@ -1,12 +1,13 @@
+import re
 import uuid
 
-from sqlmodel import Field, Index, SQLModel
 from pydantic import field_validator
-import re 
+from sqlmodel import Field, Index, SQLModel
 
 from app.utilities.exceptions import InvalidEmailHttpException
 
 EMAIL_VALIDATION = r"^[\w.-]+@\w+.\w+"
+
 
 # Shared properties
 class UserBase(SQLModel):

@@ -29,4 +29,7 @@ class NotUniqueException(HTTPException):
 
 class InvalidEmailHttpException(HTTPException):
     def __init__(self) -> None:
-        super().__init__(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Invalid email format.")
+        super().__init__(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Invalid email format.",
+        )

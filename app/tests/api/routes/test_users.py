@@ -4,9 +4,10 @@ from httpx import AsyncClient
 
 from app.core.config import settings
 
-import pytest
 
-async def _create_user(async_client: AsyncClient, name: str, email: str, phone:str, x_api_key:str):
+async def _create_user(
+    async_client: AsyncClient, name: str, email: str, phone: str, x_api_key: str
+):
     data = {
         "name": name,
         "email": email,
@@ -107,11 +108,17 @@ async def test_create_user_phone_already_exists_responds_409(
 async def test_create_user_with_email_without_at_symbol_returns_error(
     async_client: AsyncClient, x_api_key_header: dict[str, str]
 ) -> None:
-    response = await _create_user(async_client, name="Roberto", email="abbondanzierigmail.com", phone="1124575700", x_api_key=x_api_key_header)
-    
+    response = await _create_user(
+        async_client,
+        name="Roberto",
+        email="abbondanzierigmail.com",
+        phone="1124575700",
+        x_api_key=x_api_key_header,
+    )
+
     assert response.status_code == 422
     content = response.json()
-    
+
     assert content["detail"] == "Invalid email format."
 
 
