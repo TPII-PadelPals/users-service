@@ -5,10 +5,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.user import UserCreate
 from app.repository.users_repository import UsersRepository
-from app.utilities.exceptions import (
-    NotFoundException,
-    NotUniqueException,
-)
+from app.utilities.exceptions import NotFoundException, NotUniqueException
 
 
 async def test_create_user(session: AsyncSession) -> None:
