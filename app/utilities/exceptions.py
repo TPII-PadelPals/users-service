@@ -27,6 +27,6 @@ class NotUniqueException(HTTPException):
         super().__init__(status_code=status.HTTP_409_CONFLICT, detail=detail)
 
 
-class InvalidEmailException(Exception):
-    def __init__(self):
-        super().__init__("Invalid email format.")
+class InvalidEmailHttpException(HTTPException):
+    def __init__(self) -> None:
+        super().__init__(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Invalid email format.")

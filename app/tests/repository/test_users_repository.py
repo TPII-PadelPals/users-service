@@ -5,7 +5,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.user import UserCreate
 from app.repository.users_repository import UsersRepository
-from app.utilities.exceptions import NotFoundException, NotUniqueException, InvalidEmailException
+from app.utilities.exceptions import NotFoundException, NotUniqueException, InvalidEmailHttpException
 
 
 async def test_create_user(session: AsyncSession) -> None:
@@ -78,13 +78,13 @@ async def test_create_user_with_email_without_at_symbol_raises_exception(
     repo = UsersRepository(session)
     email_without_at_symbol = "name1domain.com"
 
-    with pytest.raises(InvalidEmailException) as e:
+    with pytest.raises(InvalidEmailHttpException) as e:
         user_create = UserCreate(
             name="roberto", email=email_without_at_symbol, phone="11 1111 1111"
         )
         await repo.create_user(user_create)
 
-    assert str(e.value) == "Invalid email format."
+    assert e.value.detail == "Invalid email format."
 
 
 async def test_get_user(session: AsyncSession) -> None:

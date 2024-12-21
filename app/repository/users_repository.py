@@ -6,7 +6,7 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.user import User, UserCreate
-from app.utilities.exceptions import NotFoundException, NotUniqueException, InvalidEmailException
+from app.utilities.exceptions import NotFoundException, NotUniqueException
 
 
 class UsersRepository:
@@ -21,15 +21,12 @@ class UsersRepository:
             raise NotUniqueException(item=attr.capitalize())
 
     async def create_user(self, user_in: UserCreate) -> User:
-        try:
-            user = User.model_validate(user_in)
-            await self._check_unique_attr("email", user.email)
-            await self._check_unique_attr("phone", user.phone)
-            self.session.add(user)
-            await self.session.commit()
-            await self.session.refresh(user)
-        except InvalidEmailException as e:
-            raise e
+        user = User.model_validate(user_in)
+        await self._check_unique_attr("email", user.email)
+        await self._check_unique_attr("phone", user.phone)
+        self.session.add(user)
+        await self.session.commit()
+        await self.session.refresh(user)
         return user
 
     async def get_users(

@@ -4,7 +4,7 @@ from sqlmodel import Field, Index, SQLModel
 from pydantic import field_validator
 import re 
 
-from app.utilities.exceptions import InvalidEmailException
+from app.utilities.exceptions import InvalidEmailHttpException
 
 EMAIL_VALIDATION = r"^[\w.-]+@\w+.\w+"
 
@@ -17,7 +17,7 @@ class UserBase(SQLModel):
     @field_validator("email", mode="before")
     def validate_email(cls, value):
         if not re.match(EMAIL_VALIDATION, value):
-            raise InvalidEmailException()
+            raise InvalidEmailHttpException()
         return value
 
 
