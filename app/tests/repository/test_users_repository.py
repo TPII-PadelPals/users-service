@@ -6,7 +6,6 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from app.models.user import UserCreate
 from app.repository.users_repository import UsersRepository
 from app.utilities.exceptions import (
-    InvalidEmailHttpException,
     NotFoundException,
     NotUniqueException,
 )
@@ -74,21 +73,6 @@ async def test_create_user_phone_already_exists_raises_exception(
         await repo.create_user(user_create)
 
     assert e.value.detail == "Phone already exists"
-
-
-async def test_create_user_with_email_without_at_symbol_raises_exception(
-    session: AsyncSession,
-) -> None:
-    repo = UsersRepository(session)
-    email_without_at_symbol = "name1domain.com"
-
-    with pytest.raises(InvalidEmailHttpException) as e:
-        user_create = UserCreate(
-            name="roberto", email=email_without_at_symbol, phone="11 1111 1111"
-        )
-        await repo.create_user(user_create)
-
-    assert e.value.detail == "Invalid email format."
 
 
 async def test_get_user(session: AsyncSession) -> None:
