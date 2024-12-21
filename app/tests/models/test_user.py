@@ -8,6 +8,7 @@ async def test_create_user_with_multiple_extension_on_email() -> None:
     user_name = "Robert"
     user_email = "abbondanzieri@yahoo.com.ar"
     user_phone = "11 1234 5678"
+
     user = UserCreate(name=user_name, email=user_email, phone=user_phone)
 
     assert user.name == user_name

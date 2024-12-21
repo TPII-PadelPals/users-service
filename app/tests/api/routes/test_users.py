@@ -1,13 +1,13 @@
 import uuid
 
-from httpx import AsyncClient
+from httpx import AsyncClient, Response
 
 from app.core.config import settings
 
 
 async def _create_user(
     async_client: AsyncClient, name: str, email: str, phone: str, x_api_key: str
-):
+) -> (Response, dict[str, str]):
     data = {
         "name": name,
         "email": email,
