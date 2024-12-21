@@ -17,7 +17,7 @@ async def _create_user(
     response = await async_client.post(
         f"{settings.API_V1_STR}/users/", headers=x_api_key, json=data
     )
-    return response
+    return (response, data)
 
 
 async def test_create_user(
@@ -108,7 +108,7 @@ async def test_create_user_phone_already_exists_responds_409(
 async def test_create_user_with_email_without_at_symbol_returns_error(
     async_client: AsyncClient, x_api_key_header: dict[str, str]
 ) -> None:
-    response = await _create_user(
+    response, _data = await _create_user(
         async_client,
         name="Roberto",
         email="abbondanzierigmail.com",
@@ -125,7 +125,7 @@ async def test_create_user_with_email_without_at_symbol_returns_error(
 async def test_create_user_with_email_without_domain_returns_error(
     async_client: AsyncClient, x_api_key_header: dict[str, str]
 ) -> None:
-    response = await _create_user(
+    response, _data = await _create_user(
         async_client,
         name="Roberto",
         email="abbondanzieri@.com",
@@ -142,7 +142,7 @@ async def test_create_user_with_email_without_domain_returns_error(
 async def test_create_user_with_email_without_extension_returns_error(
     async_client: AsyncClient, x_api_key_header: dict[str, str]
 ) -> None:
-    response = await _create_user(
+    response, _data = await _create_user(
         async_client,
         name="Roberto",
         email="abbondanzieri@domain.",
@@ -154,6 +154,26 @@ async def test_create_user_with_email_without_extension_returns_error(
     content = response.json()
 
     assert content["detail"] == "Invalid email format."
+
+
+async def test_create_user_with_email_with_multiple_extension_on_email(
+    async_client: AsyncClient, x_api_key_header: dict[str, str]
+) -> None:
+    response, data = await _create_user(
+        async_client,
+        name="Roberto",
+        email="abbondanzieri@yahoo.com.ar",
+        phone="1124575700",
+        x_api_key=x_api_key_header,
+    )
+
+    assert response.status_code == 201
+    content = response.json()
+
+    assert "public_id" in content
+    assert content["name"] == data["name"]
+    assert content["email"] == data["email"]
+    assert content["phone"] == data["phone"]
 
 
 async def test_read_user(

@@ -6,7 +6,7 @@ from sqlmodel import Field, Index, SQLModel
 
 from app.utilities.exceptions import InvalidEmailHttpException
 
-EMAIL_VALIDATION = r"^[\w.-]+@\w+.\w+"
+EMAIL_VALIDATION = r"^[\w.-]+@\w+\.\w+(\.\w+)?$"
 
 
 # Shared properties
@@ -17,7 +17,7 @@ class UserBase(SQLModel):
 
     @field_validator("email", mode="before")
     def validate_email(cls, value):
-        if not re.fullmatch(EMAIL_VALIDATION, value):
+        if not re.match(EMAIL_VALIDATION, value):
             raise InvalidEmailHttpException()
         return value
 
