@@ -28,3 +28,10 @@ async def test_create_user_without_domain_on_email_raises_error() -> None:
         UserCreate(name="Robert", email="abbondanzieri@.com", phone="11 1234 5678")
 
     assert e.value.detail == "Invalid email format."
+
+
+async def test_create_user_without_extension_on_email_raises_error() -> None:
+    with pytest.raises(InvalidEmailHttpException) as e:
+        UserCreate(name="Robert", email="abbondanzieri@domain.", phone="11 1234 5678")
+
+    assert e.value.detail == "Invalid email format."
