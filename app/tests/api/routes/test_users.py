@@ -318,3 +318,42 @@ async def test_read_users_skip_limit_defaults(
     users = sorted(content["data"], key=lambda user: user["name"])
     assert users[0]["public_id"] == users_data[skip]["public_id"]
     assert users[-1]["public_id"] == users_data[limit - 1]["public_id"]
+
+
+async def test_read_users_telegram_id(
+    async_client: AsyncClient, x_api_key_header: dict[str, str]
+) -> None:
+    users_data = []
+    for i in range(4):
+        data = {
+            "name": f"Name {i}",
+            "email": f"name-{i}@domain.com",
+            "phone": f"{i}{i} {i}{i}{i}{i} {i}{i}{i}{i}",
+            "telegram_id": f"{i}",
+        }
+        response = await async_client.post(
+            f"{settings.API_V1_STR}/users/", headers=x_api_key_header, json=data
+        )
+        users_data.append(response.json())
+    telegram_id = 0
+    response = await async_client.get(
+        f"{settings.API_V1_STR}/users/",
+        headers=x_api_key_header,
+        params={"telegram_id": telegram_id},
+    )
+    assert response.status_code == 200
+
+    content = response.json()
+    users = content["data"]
+    users_count = content["count"]
+
+    assert users_count == 1
+
+    user = users[0]
+    user_data = users_data[0]
+
+    assert user["public_id"] == user_data["public_id"]
+    assert user["name"] == user_data["name"]
+    assert user["email"] == user_data["email"]
+    assert user["phone"] == user_data["phone"]
+    assert user["telegram_id"] == user_data["telegram_id"]

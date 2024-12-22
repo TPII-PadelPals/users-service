@@ -22,6 +22,24 @@ async def test_create_user(session: AsyncSession) -> None:
     assert user.phone == user_create.phone
 
 
+async def test_create_user_may_contain_telegram_id(session: AsyncSession) -> None:
+    repo = UsersRepository(session)
+    user_create = UserCreate(
+        name="Name Surname", email="name-1@domain.com", phone="11 1111 1111"
+    )
+    user = await repo.create_user(user_create)
+    assert user.telegram_id is None
+
+    user_create = UserCreate(
+        name="Name Surname",
+        email="name-2@domain.com",
+        phone="11 1111 2222",
+        telegram_id="123456789",
+    )
+    user = await repo.create_user(user_create)
+    assert user.telegram_id == user_create.telegram_id
+
+
 async def test_create_user_id_autoincremental(session: AsyncSession) -> None:
     repo = UsersRepository(session)
     last_user_id = 0
@@ -90,11 +108,8 @@ async def test_get_user(session: AsyncSession) -> None:
 
 async def test_get_user_not_found(session: AsyncSession) -> None:
     repo = UsersRepository(session)
-    try:
+    with pytest.raises(NotFoundException):
         await repo.get_user(uuid.uuid4())
-        raise ArithmeticError()
-    except NotFoundException:
-        assert True
 
 
 async def test_get_users(session: AsyncSession) -> None:
@@ -108,7 +123,7 @@ async def test_get_users(session: AsyncSession) -> None:
         )
         user_created = await repo.create_user(user_create)
         users_created.append(user_created)
-    users_got, users_count = await repo.get_users(skip, limit)
+    users_got, users_count = await repo.get_users(skip=skip, limit=limit)
     users_got = sorted(users_got, key=lambda user: user.name)
     assert users_count == limit
     assert len(users_got) == limit

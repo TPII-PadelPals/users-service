@@ -10,13 +10,14 @@ ITEM_NOT_FOUND = {status.HTTP_404_NOT_FOUND: {"description": "Item not found"}}
 ITEM_RESPONSES = {**ITEM_NOT_FOUND, **NOT_ENOUGH_PERMISSIONS}
 
 # User responses
-USER_NOT_FOUND = {
-    status.HTTP_404_NOT_FOUND: {"description": "User not found"},
+POST_USERS_RESPONSES = {
+    status.HTTP_201_CREATED: {"description": "User created"},
     status.HTTP_409_CONFLICT: {"description": "Email or phone already exists"},
+    status.HTTP_422_UNPROCESSABLE_ENTITY: {"description": "Invalid email format."},
 }
 
-USER_INVALID_EMAIL = {
-    status.HTTP_422_UNPROCESSABLE_ENTITY: {"description": "Invalid email format."}
+GET_USERS_RESPONSES = {status.HTTP_200_OK: {"description": "Users recovered"}}
+GET_USER_RESPONSES = {
+    status.HTTP_200_OK: {"description": "User recovered"},
+    status.HTTP_404_NOT_FOUND: {"description": "User not found"},
 }
-
-USER_RESPONSES = {**USER_NOT_FOUND, **USER_INVALID_EMAIL}
