@@ -2,12 +2,11 @@ from typing import Any
 
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.api.routes.google import google_auth_callback_inner, google_auth_inner
-from app.core.config import settings
 from app.repository.users_repository import UsersRepository
+from app.services.google_service import GoogleService
 
 
-async def test_google_auth_inner(mocker: Any) -> None:
+async def test_google_service_auth(mocker: Any) -> None:
     telegram_id = "123456789"
     redirect_uri = "/google/auth/callback"
     request_mock = mocker.Mock()
@@ -18,14 +17,15 @@ async def test_google_auth_inner(mocker: Any) -> None:
     oauth_mock.google = mocker.Mock()
     oauth_mock.google.authorize_redirect = mocker.AsyncMock()
 
-    await google_auth_inner(request_mock, telegram_id, oauth_mock)
+    service = GoogleService(oauth_mock)
+    await service.auth(request_mock, telegram_id)
 
     oauth_mock.google.authorize_redirect.assert_called_once_with(
         request_mock, redirect_uri, state=telegram_id
     )
 
 
-async def test_google_auth_callback_inner(session: AsyncSession, mocker: Any) -> None:
+async def test_google_service_auth_callback(session: AsyncSession, mocker: Any) -> None:
     telegram_id = "123456789"
     user_info = {
         "name": "Name Surname",
@@ -42,20 +42,12 @@ async def test_google_auth_callback_inner(session: AsyncSession, mocker: Any) ->
         side_effect=lambda request: token if request == request_mock else None
     )
 
-    result_html = await google_auth_callback_inner(request_mock, session, oauth_mock)
+    service = GoogleService(oauth_mock)
+    result_html = await service.auth_callback(request_mock, session)
 
-    expected_html = f"""
-    <html>
-        <head>
-            <title>Registro exitoso</title>
-        </head>
-        <body>
-            <h1>Registro exitoso!</h1>
-            <button onclick="window.location.href='{settings.TELEGRAM_PATH}'">Volver a telegram</button>
-        </body>
-    </html>
-    """
-
+    expected_html = GoogleService.AUTH_CALLBACK_MSG
+    print(f"{result_html = }")
+    print(f"{expected_html = }")
     assert result_html == expected_html
 
     users_repo = UsersRepository(session)
