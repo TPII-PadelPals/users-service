@@ -21,9 +21,9 @@ class GoogleService:
     </html>
     """
 
-    def __init__(self, oauth: Any, users_service: UsersService = UsersService()):
+    def __init__(self, oauth: Any):
         self.oauth = oauth
-        self.users_service = users_service
+        self.users_service = UsersService()
 
     async def auth(self, request: Request, telegram_id: str) -> Any:
         redirect_uri = request.url_for("google_auth_callback")
