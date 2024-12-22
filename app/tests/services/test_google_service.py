@@ -46,8 +46,6 @@ async def test_google_service_auth_callback(session: AsyncSession, mocker: Any) 
     result_html = await service.auth_callback(request_mock, session)
 
     expected_html = GoogleService.AUTH_CALLBACK_MSG
-    print(f"{result_html = }")
-    print(f"{expected_html = }")
     assert result_html == expected_html
 
     users_repo = UsersRepository(session)
