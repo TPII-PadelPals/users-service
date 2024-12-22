@@ -8,7 +8,7 @@ from app.repository.users_repository import UsersRepository
 
 
 async def test_google_auth_inner(mocker: Any) -> None:
-    chat_id = "123456789"
+    telegram_id = "123456789"
     redirect_uri = "/google/auth/callback"
     request_mock = mocker.Mock()
     request_mock.url_for = (
@@ -18,15 +18,15 @@ async def test_google_auth_inner(mocker: Any) -> None:
     oauth_mock.google = mocker.Mock()
     oauth_mock.google.authorize_redirect = mocker.AsyncMock()
 
-    await google_auth_inner(request_mock, chat_id, oauth_mock)
+    await google_auth_inner(request_mock, telegram_id, oauth_mock)
 
     oauth_mock.google.authorize_redirect.assert_called_once_with(
-        request_mock, redirect_uri, state=chat_id
+        request_mock, redirect_uri, state=telegram_id
     )
 
 
 async def test_google_auth_callback_inner(session: AsyncSession, mocker: Any) -> None:
-    chat_id = "123456789"
+    telegram_id = "123456789"
     user_info = {
         "name": "Name Surname",
         "email": "name@domain.com",
@@ -34,7 +34,7 @@ async def test_google_auth_callback_inner(session: AsyncSession, mocker: Any) ->
     token = {"userinfo": user_info}
     request_mock = mocker.Mock()
     request_mock.query_params = mocker.Mock()
-    request_mock.query_params.get = lambda key: chat_id if key == "state" else None
+    request_mock.query_params.get = lambda key: telegram_id if key == "state" else None
 
     oauth_mock = mocker.Mock()
     oauth_mock.google = mocker.Mock()
@@ -65,4 +65,4 @@ async def test_google_auth_callback_inner(session: AsyncSession, mocker: Any) ->
     assert user.name == user_info["name"]
     assert user.email == user_info["email"]
     assert user.phone == ""
-    assert user.telegram_id == chat_id
+    assert user.telegram_id == telegram_id

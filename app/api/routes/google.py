@@ -27,13 +27,15 @@ oauth.register(
     status_code=status.HTTP_200_OK,
     responses={**GOOGLE_RESPONSES},  # type: ignore[dict-item]
 )
-async def google_auth(request: Request, chat_id: str) -> Any:
-    return await google_auth_inner(request, chat_id, oauth)
+async def google_auth(request: Request, telegram_id: str) -> Any:
+    return await google_auth_inner(request, telegram_id, oauth)
 
 
-async def google_auth_inner(request: Any, chat_id: str, oauth: Any) -> Any:
+async def google_auth_inner(request: Any, telegram_id: str, oauth: Any) -> Any:
     redirect_uri = request.url_for("google_auth_callback")
-    return await oauth.google.authorize_redirect(request, redirect_uri, state=chat_id)
+    return await oauth.google.authorize_redirect(
+        request, redirect_uri, state=telegram_id
+    )
 
 
 @router.get("/auth/callback", response_class=HTMLResponse, name="google_auth_callback")
@@ -44,14 +46,14 @@ async def google_auth_callback(request: Request, session: SessionDep) -> Any:
 async def google_auth_callback_inner(
     request: Any, session: SessionDep, oauth: Any
 ) -> Any:
-    chat_id = request.query_params.get("state")
+    telegram_id = request.query_params.get("state")
     token = await oauth.google.authorize_access_token(request)
     user_info = token["userinfo"]
     user_create = UserCreate(
         name=user_info["name"],
         email=user_info["email"],
         phone="",
-        telegram_id=chat_id,
+        telegram_id=telegram_id,
     )
     await create_user_inner(session, user_create)
     button_onclick = f"window.location.href='{settings.TELEGRAM_PATH}'"
