@@ -7,7 +7,6 @@ from fastapi.responses import HTMLResponse
 from app.core.config import settings
 from app.services.google_service import GoogleService
 from app.utilities.dependencies import SessionDep
-from app.utilities.messages import GOOGLE_RESPONSES
 
 router = APIRouter()
 
@@ -23,11 +22,7 @@ oauth.register(
 service = GoogleService(oauth)
 
 
-@router.get(
-    "/auth",
-    status_code=status.HTTP_200_OK,
-    responses={**GOOGLE_RESPONSES},  # type: ignore[dict-item]
-)
+@router.get("/auth", status_code=status.HTTP_200_OK)
 async def google_auth(request: Request, telegram_id: str) -> Any:
     return await service.auth(request, telegram_id)
 
