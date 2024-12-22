@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.routing import APIRoute
 from starlette.middleware.sessions import SessionMiddleware
 
-from app.api.main import api_router_open, api_router_token
+from app.api.main import api_router_with_api_key, api_router_without_api_key
 from app.core.config import settings
 from app.core.db import init_db
 
@@ -31,5 +31,5 @@ app = FastAPI(
 app.add_middleware(SessionMiddleware, secret_key=settings.MIDDLEWARE_KEY)
 
 # Register routes
-app.include_router(api_router_open, prefix=settings.API_V1_STR)
-app.include_router(api_router_token, prefix=settings.API_V1_STR)
+app.include_router(api_router_without_api_key, prefix=settings.API_V1_STR)
+app.include_router(api_router_with_api_key, prefix=settings.API_V1_STR)
