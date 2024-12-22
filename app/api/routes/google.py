@@ -1,4 +1,3 @@
-# import os
 from typing import Any
 
 from authlib.integrations.starlette_client import OAuth  # type: ignore
@@ -9,7 +8,6 @@ from app.api.routes.users import create_user_inner
 from app.core.config import settings
 from app.models.user import UserCreate
 from app.utilities.dependencies import SessionDep
-from app.utilities.exceptions import MissingFieldException
 from app.utilities.messages import GOOGLE_RESPONSES
 
 router = APIRouter()
@@ -29,14 +27,11 @@ oauth.register(
     status_code=status.HTTP_200_OK,
     responses={**GOOGLE_RESPONSES},  # type: ignore[dict-item]
 )
-async def google_auth(request: Request) -> Any:
-    return await google_auth_inner(request, oauth)
+async def google_auth(request: Request, chat_id: str) -> Any:
+    return await google_auth_inner(request, chat_id, oauth)
 
 
-async def google_auth_inner(request: Any, oauth: Any) -> Any:
-    chat_id = request.query_params.get("chat_id")
-    if not chat_id:
-        raise MissingFieldException(detail="Chat ID is required")
+async def google_auth_inner(request: Any, chat_id: str, oauth: Any) -> Any:
     redirect_uri = request.url_for("google_auth_callback")
     return await oauth.google.authorize_redirect(request, redirect_uri, state=chat_id)
 
