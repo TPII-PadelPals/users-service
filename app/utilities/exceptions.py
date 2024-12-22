@@ -25,3 +25,11 @@ class NotUniqueException(HTTPException):
     def __init__(self, item: str) -> None:
         detail = f"{item.capitalize()} already exists"
         super().__init__(status_code=status.HTTP_409_CONFLICT, detail=detail)
+
+
+class InvalidEmailHttpException(HTTPException):
+    def __init__(self) -> None:
+        super().__init__(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Invalid email format.",
+        )
