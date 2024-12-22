@@ -1,6 +1,12 @@
+import re
 import uuid
 
+from pydantic import field_validator
 from sqlmodel import Field, Index, SQLModel
+
+from app.utilities.exceptions import InvalidEmailHttpException
+
+EMAIL_VALIDATOR = r"^[\w.-]+@\w+\.\w+(\.\w+)?$"
 
 
 # Shared properties
@@ -8,6 +14,12 @@ class UserBase(SQLModel):
     name: str = Field(min_length=1, max_length=255)
     email: str = Field(unique=True)
     phone: str = Field(unique=True)
+
+    @field_validator("email", mode="before")
+    def validate_email(cls, value):
+        if not re.match(EMAIL_VALIDATOR, value):
+            raise InvalidEmailHttpException()
+        return value
 
 
 # Properties to receive on item creation
