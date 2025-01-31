@@ -22,6 +22,7 @@ class GoogleService:
     """
 
     def __init__(self, oauth: Any):
+        self.name = "google-service"
         self.oauth = oauth
         self.users_service = UsersService()
 

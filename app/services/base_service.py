@@ -4,6 +4,8 @@ from typing import Any
 import httpx
 from httpx._types import QueryParamTypes, RequestData
 
+from app.utilities.exceptions import ExternalServiceException
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -14,15 +16,18 @@ class BaseService:
         self.base_url = ""
         self.base_headers: dict[str, str] = {}
         self.timeout = 5
+        self.name = "base-service"
         self._set_base_url("localhost", 8000)
 
-    def _set_base_url(self, host: str = "localhost", port: int | None = None) -> None:
+    def _set_base_url(
+        self, is_https: bool = False, host: str = "localhost", port: int | None = None
+    ) -> None:
         """Set the base URL for the service."""
         local_server = ["localhost", "127.0.0.1"]
         service_url = f"{host}:{port}" if port is not None else f"{host}"
         self.base_url = (
             f"http://{service_url}"
-            if host in local_server
+            if host in local_server or is_https
             else f"https://{service_url}"
         )
 
@@ -97,8 +102,8 @@ class BaseService:
             response.raise_for_status()
             return response.json()
         except httpx.HTTPStatusError as e:
-            logger.info(f"HTTP error: {e}")
-            return None
+            logger.info(f"HTTP error: {e.response.json()}")
+            raise ExternalServiceException(self.name, e.response.json().get("detail"))
         except Exception as e:
             logger.info(f"Error: {e}")
-            return None
+            raise ExternalServiceException(self.name, str(e))

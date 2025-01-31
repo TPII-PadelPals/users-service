@@ -25,7 +25,7 @@ class UsersRepository:
         await self._check_unique_attr("email", user.email)
         await self._check_unique_attr("phone", user.phone)
         self.session.add(user)
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(user)
         return user
 
