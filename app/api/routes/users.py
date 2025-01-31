@@ -4,7 +4,11 @@ from typing import Any
 from fastapi import APIRouter, status
 
 from app.models.user import UserCreate, UserPublic, UsersPublic
+from app.services.players_service import PlayersService
 from app.services.users_service import UsersService
+from app.utilities.context_managers import (
+    service_and_repository_error_handler,
+)
 from app.utilities.dependencies import SessionDep
 from app.utilities.messages import (
     GET_USER_RESPONSES,
@@ -27,7 +31,14 @@ async def create_user(*, session: SessionDep, user_in: UserCreate) -> Any:
     """
     Create new user.
     """
-    return await service.create_user(session, user_in)
+    async with service_and_repository_error_handler(session):
+        created_user = await service.create_user(session, user_in)
+        created_user_dict = created_user.model_dump()
+        await PlayersService().create_player(
+            user_public_id=created_user_dict.get("public_id"),
+            telegram_id=created_user_dict.get("telegram_id"),
+        )
+        return created_user
 
 
 @router.get(
