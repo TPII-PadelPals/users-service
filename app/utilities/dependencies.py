@@ -31,7 +31,10 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
         expire_on_commit=False,  # type: ignore[call-overload]
     )
     async with async_session() as session:
-        yield session
+        try:
+            yield session
+        finally:
+            await session.close()
 
 
 SessionDep = Annotated[AsyncSession, Depends(get_db)]

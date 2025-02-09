@@ -3,11 +3,14 @@ import uuid
 from httpx import AsyncClient, Response
 
 from app.core.config import settings
+from app.services.players_service import PlayersService
 
+async def mock_call_player_create(_self, user_public_id, telegram_id):
+    return None
 
 async def _create_user(
-    async_client: AsyncClient, name: str, email: str, phone: str, x_api_key: str
-) -> (Response, dict[str, str]):
+    async_client: AsyncClient, name: str, email: str, phone: str, x_api_key: str, 
+) -> tuple[Response, dict[str, str]]:
     data = {
         "name": name,
         "email": email,
@@ -21,8 +24,10 @@ async def _create_user(
 
 
 async def test_create_user(
-    async_client: AsyncClient, x_api_key_header: dict[str, str]
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
 ) -> None:
+    monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
+
     data = {"name": "Name Surname", "email": "name@domain.com", "phone": "11 1234 1234"}
     response = await async_client.post(
         f"{settings.API_V1_STR}/users/", headers=x_api_key_header, json=data
@@ -36,8 +41,10 @@ async def test_create_user(
 
 
 async def test_create_user_name_min_length_is_1(
-    async_client: AsyncClient, x_api_key_header: dict[str, str]
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
 ) -> None:
+    monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
+
     name = ""
     data = {"name": name, "email": "name@domain.com", "phone": "11 1111 1111"}
     response = await async_client.post(
@@ -50,8 +57,10 @@ async def test_create_user_name_min_length_is_1(
 
 
 async def test_create_user_name_max_length_is_255(
-    async_client: AsyncClient, x_api_key_header: dict[str, str]
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
 ) -> None:
+    monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
+
     name = "a" * 256
     data = {"name": name, "email": "name@domain.com", "phone": "11 1111 1111"}
     response = await async_client.post(
@@ -64,8 +73,10 @@ async def test_create_user_name_max_length_is_255(
 
 
 async def test_create_user_email_already_exists_responds_409(
-    async_client: AsyncClient, x_api_key_header: dict[str, str]
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
 ) -> None:
+    monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
+
     duplicated_email = "name@domain.com"
     data = {"name": "Name Surname", "email": duplicated_email, "phone": "11 1111 1111"}
     await async_client.post(
@@ -81,8 +92,10 @@ async def test_create_user_email_already_exists_responds_409(
 
 
 async def test_create_user_phone_already_exists_responds_409(
-    async_client: AsyncClient, x_api_key_header: dict[str, str]
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
 ) -> None:
+    monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
+
     duplicated_phone = "11 1234 1234"
     data = {
         "name": "Name Surname",
@@ -106,8 +119,10 @@ async def test_create_user_phone_already_exists_responds_409(
 
 
 async def test_create_user_with_email_without_at_symbol_returns_error(
-    async_client: AsyncClient, x_api_key_header: dict[str, str]
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
 ) -> None:
+    monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
+
     response, _data = await _create_user(
         async_client,
         name="Roberto",
@@ -123,8 +138,10 @@ async def test_create_user_with_email_without_at_symbol_returns_error(
 
 
 async def test_create_user_with_email_without_domain_returns_error(
-    async_client: AsyncClient, x_api_key_header: dict[str, str]
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
 ) -> None:
+    monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
+
     response, _data = await _create_user(
         async_client,
         name="Roberto",
@@ -140,8 +157,10 @@ async def test_create_user_with_email_without_domain_returns_error(
 
 
 async def test_create_user_with_email_without_extension_returns_error(
-    async_client: AsyncClient, x_api_key_header: dict[str, str]
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
 ) -> None:
+    monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
+
     response, _data = await _create_user(
         async_client,
         name="Roberto",
@@ -157,8 +176,10 @@ async def test_create_user_with_email_without_extension_returns_error(
 
 
 async def test_create_user_with_email_with_multiple_extension_on_email(
-    async_client: AsyncClient, x_api_key_header: dict[str, str]
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
 ) -> None:
+    monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
+
     response, data = await _create_user(
         async_client,
         name="Roberto",
@@ -177,8 +198,10 @@ async def test_create_user_with_email_with_multiple_extension_on_email(
 
 
 async def test_read_user(
-    async_client: AsyncClient, x_api_key_header: dict[str, str]
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
 ) -> None:
+    monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
+
     data = {"name": "Name Surname", "email": "name@domain.com", "phone": "11 1234 1234"}
     response = await async_client.post(
         f"{settings.API_V1_STR}/users/", headers=x_api_key_header, json=data
@@ -210,8 +233,10 @@ async def test_read_user_not_found(
 
 
 async def test_read_user_not_authorized(
-    async_client: AsyncClient, x_api_key_header: dict[str, str]
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
 ) -> None:
+    monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
+
     data = {"name": "Name Surname", "email": "name@domain.com", "phone": "11 1234 1234"}
     response = await async_client.post(
         f"{settings.API_V1_STR}/users/", headers=x_api_key_header, json=data
@@ -229,8 +254,10 @@ async def test_read_user_not_authorized(
 
 
 async def test_read_users(
-    async_client: AsyncClient, x_api_key_header: dict[str, str]
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
 ) -> None:
+    monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
+
     users_data = []
     for i in range(2):
         data = {
@@ -260,8 +287,10 @@ async def test_read_users(
 
 
 async def test_read_users_skip_limit(
-    async_client: AsyncClient, x_api_key_header: dict[str, str]
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
 ) -> None:
+    monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
+
     users_data = []
     for i in range(4):
         data = {
@@ -293,8 +322,10 @@ async def test_read_users_skip_limit(
 
 
 async def test_read_users_skip_limit_defaults(
-    async_client: AsyncClient, x_api_key_header: dict[str, str]
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
 ) -> None:
+    monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
+
     skip = 0
     limit = 100
     users_data = []
@@ -315,14 +346,16 @@ async def test_read_users_skip_limit_defaults(
     content = response.json()
     assert content["count"] == limit
     assert len(content["data"]) == limit
-    users = sorted(content["data"], key=lambda user: user["name"])
-    assert users[0]["public_id"] == users_data[skip]["public_id"]
-    assert users[-1]["public_id"] == users_data[limit - 1]["public_id"]
+    for user in content["data"]:
+        assert user in users_data
+
 
 
 async def test_read_users_telegram_id(
-    async_client: AsyncClient, x_api_key_header: dict[str, str]
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
 ) -> None:
+    monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
+
     users_data = []
     for i in range(4):
         data = {

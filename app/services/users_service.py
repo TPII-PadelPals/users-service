@@ -17,8 +17,8 @@ class UsersService:
                 user_public_id=user_dict.get("public_id"),
                 telegram_id=user_dict.get("telegram_id"),
             )
-        await session.refresh(user)
-        return user
+            await session.refresh(user)
+            return user
 
     async def read_users(
         self,
