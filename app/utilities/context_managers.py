@@ -22,13 +22,10 @@ async def service_and_repository_error_handler(db: AsyncSession):
 
     except HTTPException as e:
         await db.rollback()
-        raise HTTPException(status_code=e.status_code, detail=e.detail)
+        raise e
 
     except Exception as e:
         await db.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
         )
-
-    finally:
-        await db.close()

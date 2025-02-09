@@ -102,8 +102,15 @@ class BaseService:
             response.raise_for_status()
             return response.json()
         except httpx.HTTPStatusError as e:
-            logger.info(f"HTTP error: {e.response.json()}")
-            raise ExternalServiceException(self.name, e.response.json().get("detail"))
+            try:
+                logger.info(f"HTTP error: {e.response.json()}")
+                raise ExternalServiceException(
+                    self.name, e.response.json().get("detail")
+                )
+            except ValueError:
+                logger.info(f"HTTP value error: {e.response.text}")
+                raise ExternalServiceException(self.name, e.response.text)
+
         except Exception as e:
             logger.info(f"Error: {e}")
             raise ExternalServiceException(self.name, str(e))

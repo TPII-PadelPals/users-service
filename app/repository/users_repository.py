@@ -26,7 +26,6 @@ class UsersRepository:
         await self._check_unique_attr("phone", user.phone)
         self.session.add(user)
         await self.session.flush()
-        await self.session.refresh(user)
         return user
 
     async def get_users(
