@@ -2,7 +2,6 @@ import asyncio
 from collections.abc import AsyncGenerator
 from typing import Any
 
-from psycopg import AsyncConnection
 import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
@@ -20,9 +19,12 @@ from app.utilities.dependencies import get_db
 
 db_url = str(test_settings.SQLALCHEMY_DATABASE_URI)
 
+
 @pytest_asyncio.fixture(name="session")
 async def db() -> AsyncGenerator[AsyncSession, None]:
-    async with AsyncSession(get_async_engine(db_url), expire_on_commit=False) as _session:
+    async with AsyncSession(
+        get_async_engine(db_url), expire_on_commit=False
+    ) as _session:
         try:
             await init_db(db_url)
             yield _session
@@ -32,9 +34,11 @@ async def db() -> AsyncGenerator[AsyncSession, None]:
         finally:
             await _session.close()
 
+
 @pytest_asyncio.fixture(autouse=True)
 async def override_dependency(session: AsyncSession):
     app.dependency_overrides[get_db] = lambda: session
+
 
 @pytest_asyncio.fixture(name="async_client")
 async def async_client() -> AsyncGenerator[AsyncClient, None]:
@@ -43,12 +47,14 @@ async def async_client() -> AsyncGenerator[AsyncClient, None]:
     ) as client:
         yield client
 
-@pytest_asyncio.fixture(scope='session')
-def event_loop(request):
+
+@pytest_asyncio.fixture(scope="session")
+def event_loop():
     """Create an instance of the default event loop for each test case."""
     loop = asyncio.get_event_loop_policy().new_event_loop()
     yield loop
     loop.close()
+
 
 @pytest_asyncio.fixture
 def x_api_key_header() -> dict[str, str]:

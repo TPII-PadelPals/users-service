@@ -4,12 +4,20 @@ from httpx import AsyncClient, Response
 
 from app.core.config import settings
 from app.services.players_service import PlayersService
+from app.tests.utils.users import (
+    mock_call_player_create,
+    mock_call_player_create_raise_exception,
+)
 
 async def mock_call_player_create(_self, user_public_id, telegram_id):
     return None
 
 async def _create_user(
-    async_client: AsyncClient, name: str, email: str, phone: str, x_api_key: str, 
+    async_client: AsyncClient,
+    name: str,
+    email: str,
+    phone: str,
+    x_api_key: str,
 ) -> tuple[Response, dict[str, str]]:
     data = {
         "name": name,
