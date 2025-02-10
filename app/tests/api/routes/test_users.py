@@ -9,8 +9,6 @@ from app.tests.utils.users import (
     mock_call_player_create_raise_exception,
 )
 
-async def mock_call_player_create(_self, user_public_id, telegram_id):
-    return None
 
 async def _create_user(
     async_client: AsyncClient,
@@ -46,6 +44,22 @@ async def test_create_user(
     assert content["name"] == data["name"]
     assert content["email"] == data["email"]
     assert content["phone"] == data["phone"]
+
+
+async def test_create_user_raises_external_service_exception(
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
+) -> None:
+    monkeypatch.setattr(
+        PlayersService, "create_player", mock_call_player_create_raise_exception
+    )
+
+    data = {"name": "Name Surname", "email": "name@domain.com", "phone": "11 1234 1234"}
+    response = await async_client.post(
+        f"{settings.API_V1_STR}/users/", headers=x_api_key_header, json=data
+    )
+    assert response.status_code == 500
+    content = response.json()
+    assert content["detail"] == "EXT_SERVICE:external-service:error"
 
 
 async def test_create_user_name_min_length_is_1(
@@ -334,7 +348,6 @@ async def test_read_users_skip_limit_defaults(
 ) -> None:
     monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
 
-    skip = 0
     limit = 100
     users_data = []
     for i in range(200):
@@ -356,7 +369,6 @@ async def test_read_users_skip_limit_defaults(
     assert len(content["data"]) == limit
     for user in content["data"]:
         assert user in users_data
-
 
 
 async def test_read_users_telegram_id(
