@@ -17,7 +17,7 @@ class BaseService:
         self.base_headers: dict[str, str] = {}
         self.timeout = 5
         self.name = "base-service"
-        self._set_base_url("localhost", 8000)
+        self._set_base_url(host="localhost", port=8000)
 
     def _set_base_url(
         self, is_https: bool = False, host: str = "localhost", port: int | None = None
