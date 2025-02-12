@@ -60,6 +60,12 @@ async def test_create_user_raises_external_service_exception(
     assert response.status_code == 500
     content = response.json()
     assert content["detail"] == "EXT_SERVICE:external-service:error"
+    response = await async_client.get(
+        f"{settings.API_V1_STR}/users/", headers=x_api_key_header
+    )
+    assert response.status_code == 200
+    content = response.json()
+    assert content["count"] == 0
 
 
 async def test_create_user_name_min_length_is_1(
