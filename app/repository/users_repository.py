@@ -29,10 +29,10 @@ class UsersRepository:
         return user
 
     async def get_users(
-        self, telegram_id: str | None = None, skip: int = 0, limit: int = 100
+        self, telegram_id: int | None = None, skip: int = 0, limit: int = 100
     ) -> tuple[Sequence[User], int]:
         statement = select(User).offset(skip).limit(limit)
-        if telegram_id:
+        if telegram_id is not None:
             statement = statement.where(User.telegram_id == telegram_id)
         items = (await self.session.exec(statement)).all()
         count = len(items)

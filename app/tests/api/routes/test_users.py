@@ -388,7 +388,7 @@ async def test_read_users_telegram_id(
             "name": f"Name {i}",
             "email": f"name-{i}@domain.com",
             "phone": f"{i}{i} {i}{i}{i}{i} {i}{i}{i}{i}",
-            "telegram_id": f"{i}",
+            "telegram_id": i,
         }
         response = await async_client.post(
             f"{settings.API_V1_STR}/users/", headers=x_api_key_header, json=data

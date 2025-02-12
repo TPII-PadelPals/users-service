@@ -23,7 +23,7 @@ class UsersService:
     async def read_users(
         self,
         session: SessionDep,
-        telegram_id: str | None = None,
+        telegram_id: int | None = None,
         skip: int = 0,
         limit: int = 100,
     ) -> UsersPublic:

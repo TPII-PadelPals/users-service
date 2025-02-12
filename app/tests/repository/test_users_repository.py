@@ -34,7 +34,7 @@ async def test_create_user_may_contain_telegram_id(session: AsyncSession) -> Non
         name="Name Surname",
         email="name-2@domain.com",
         phone="11 1111 2222",
-        telegram_id="123456789",
+        telegram_id=123456789,
     )
     user = await repo.create_user(user_create)
     assert user.telegram_id == user_create.telegram_id

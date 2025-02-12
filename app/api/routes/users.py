@@ -37,7 +37,7 @@ async def create_user(*, session: SessionDep, user_in: UserCreate) -> Any:
     responses={**GET_USERS_RESPONSES},  # type: ignore[dict-item]
 )
 async def read_users(
-    session: SessionDep, telegram_id: str | None = None, skip: int = 0, limit: int = 100
+    session: SessionDep, telegram_id: int | None = None, skip: int = 0, limit: int = 100
 ) -> Any:  #
     """
     Retrieve users.
