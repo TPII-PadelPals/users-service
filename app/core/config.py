@@ -38,6 +38,10 @@ class Settings(BaseSettings):
     ITEMS_SERVICE_PORT: int | None = None
     ITEMS_SERVICE_API_KEY: str | None = None
 
+    PLAYERS_SERVICE_HOST: str
+    PLAYERS_SERVICE_PORT: int
+    PLAYERS_SERVICE_API_KEY: str
+
     @computed_field  # type: ignore[prop-decorator]
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> MultiHostUrl:

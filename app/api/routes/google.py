@@ -23,7 +23,7 @@ service = GoogleService(oauth)
 
 
 @router.get("/auth", status_code=status.HTTP_200_OK)
-async def google_auth(request: Request, telegram_id: str) -> Any:
+async def google_auth(request: Request, telegram_id: int) -> Any:
     return await service.auth(request, telegram_id)
 
 

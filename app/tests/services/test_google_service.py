@@ -4,10 +4,12 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.repository.users_repository import UsersRepository
 from app.services.google_service import GoogleService
+from app.services.players_service import PlayersService
+from app.tests.utils.users import mock_call_player_create
 
 
 async def test_google_service_auth(mocker: Any) -> None:
-    telegram_id = "123456789"
+    telegram_id = 123456789
     redirect_uri = "/google/auth/callback"
     request_mock = mocker.Mock()
     request_mock.url_for = (
@@ -25,8 +27,9 @@ async def test_google_service_auth(mocker: Any) -> None:
     )
 
 
-async def test_google_service_auth_callback(session: AsyncSession, mocker: Any) -> None:
-    telegram_id = "123456789"
+async def test_google_service_auth_callback(session: AsyncSession, mocker: Any, monkeypatch) -> None:
+    monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
+    telegram_id = 123456789
     user_info = {
         "name": "Name Surname",
         "email": "name@domain.com",
