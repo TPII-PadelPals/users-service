@@ -40,7 +40,7 @@ class Settings(BaseSettings):
 
     PLAYERS_SERVICE_HOST: str
     PLAYERS_SERVICE_PORT: int
-    PLAYERS_SERVICE_API_KEY: str | None = None
+    PLAYERS_SERVICE_API_KEY: str
 
     @computed_field  # type: ignore[prop-decorator]
     @property

@@ -14,8 +14,7 @@ class PlayersService(BaseService):
         self._set_base_url(
             True, settings.PLAYERS_SERVICE_HOST, settings.PLAYERS_SERVICE_PORT
         )
-        if settings.PLAYERS_SERVICE_API_KEY:
-            self.set_base_headers({"x-api-key": settings.PLAYERS_SERVICE_API_KEY})
+        self.set_base_headers({"x-api-key": settings.PLAYERS_SERVICE_API_KEY})
 
     async def create_player(self, user_public_id: UUID, telegram_id: int | None) -> Any:
         """Create player using players service."""
