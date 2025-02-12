@@ -10,7 +10,9 @@ class ItemsService(BaseService):
         """Init the service."""
         super().__init__()
         self.name = "items-service"
-        self._set_base_url(host=settings.ITEMS_SERVICE_HOST, port=settings.ITEMS_SERVICE_PORT)
+        self._set_base_url(
+            host=settings.ITEMS_SERVICE_HOST, port=settings.ITEMS_SERVICE_PORT
+        )
         if settings.ITEMS_SERVICE_API_KEY:
             self.set_base_headers({"x-api-key": settings.ITEMS_SERVICE_API_KEY})
 
