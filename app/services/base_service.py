@@ -20,14 +20,14 @@ class BaseService:
         self._set_base_url(host="localhost", port=8000)
 
     def _set_base_url(
-        self, is_https: bool = False, host: str = "localhost", port: int | None = None
+        self, is_http: bool = False, host: str = "localhost", port: int | None = None
     ) -> None:
         """Set the base URL for the service."""
         local_server = ["localhost", "127.0.0.1"]
         service_url = f"{host}:{port}" if port is not None else f"{host}"
         self.base_url = (
             f"http://{service_url}"
-            if host in local_server or is_https
+            if host in local_server or is_http
             else f"https://{service_url}"
         )
 
