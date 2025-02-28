@@ -2,6 +2,7 @@ import re
 import uuid
 
 from pydantic import field_validator
+from sqlalchemy import BigInteger
 from sqlmodel import Field, Index, SQLModel
 
 from app.utilities.exceptions import InvalidEmailHttpException
@@ -14,7 +15,7 @@ class UserBase(SQLModel):
     name: str = Field(min_length=1, max_length=255)
     email: str = Field(unique=True)
     phone: str = Field(unique=True)
-    telegram_id: int | None = Field(default=None)
+    telegram_id: int | None = Field(default=None, sa_type=BigInteger)
 
     @field_validator("email", mode="before")
     def validate_email(cls, value):
