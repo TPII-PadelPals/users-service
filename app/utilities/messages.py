@@ -23,3 +23,5 @@ GET_USER_RESPONSES = {
 }
 
 GET_PUBLIC_KEY_RESPONSES = {status.HTTP_200_OK: {"description": "Public key"}}
+
+CREATE_TOKEN_RESPONSES = {status.HTTP_201_CREATED: {"description": "Token created"}}
