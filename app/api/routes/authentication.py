@@ -33,7 +33,7 @@ async def get_public_key(
 
 
 @router.post(
-    "/token/",
+    "/token/{user_public_id}",
     response_model=TokenModel,
     status_code=status.HTTP_201_CREATED,
     responses={**CREATE_TOKEN_RESPONSES},  # type: ignore[dict-item]
@@ -46,12 +46,16 @@ async def generate_token(*, user_public_id: uuid.UUID) -> TokenModel:
 
 
 @router.get(
-    "/token/",
+    "/token/{user_public_id}",
     response_model=TokenModel,
     status_code=status.HTTP_200_OK,
     responses={**GET_VALIDATE_TOKEN},  # type: ignore[dict-item]
 )
-async def validate_token(*, user_public_id: uuid.UUID, token: str) -> TokenPayload:
+async def validate_token(
+    *, user_public_id: uuid.UUID, token: TokenModel
+) -> TokenPayload:
     public_key = key_service.serialize_public_key()
-    token_payload = token_service.validation_token(token, public_key, user_public_id)
+    token_payload = token_service.validation_token(
+        token.token, public_key, user_public_id
+    )
     return token_payload
