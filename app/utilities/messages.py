@@ -21,3 +21,5 @@ GET_USER_RESPONSES = {
     status.HTTP_200_OK: {"description": "User recovered"},
     status.HTTP_404_NOT_FOUND: {"description": "User not found"},
 }
+
+GET_PUBLIC_KEY_RESPONSES = {status.HTTP_200_OK: {"description": "Public key"}}

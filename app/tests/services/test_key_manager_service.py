@@ -17,4 +17,4 @@ async def test_key_manager_add_public_key() -> None:
     key_manager.add_public_key(user_public_id, new_key)
     key = key_manager.get_public_key(user_public_id)
     assert key is not None
-    assert key is new_key
+    assert key == new_key

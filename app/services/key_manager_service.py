@@ -23,17 +23,17 @@ class KeyManagerService:
         )
         self.public_key = self.private_key.public_key()
 
-    def serialize_public_key(self) -> bytes:
+    def serialize_public_key(self) -> str:
         return self.public_key.public_bytes(
             encoding=serialization.Encoding.PEM,
             format=serialization.PublicFormat.SubjectPublicKeyInfo,
-        )
+        ).decode("utf-8")
 
-    def add_public_key(self, user_public_id: uuid.UUID, public_key: bytes) -> None:
-        self.key_storage[user_public_id] = public_key
+    def add_public_key(self, user_public_id: uuid.UUID, public_key: str) -> None:
+        self.key_storage[user_public_id] = public_key.encode("utf-8")
 
-    def get_public_key(self, user_public_id: uuid.UUID) -> bytes:
-        result = self.key_storage.get(user_public_id)
+    def get_public_key(self, user_public_id: uuid.UUID) -> str:
+        result = self.key_storage.get(user_public_id).decode("utf-8")
         if result is None:
             raise NotFoundException("Public key")
         return result
