@@ -1,7 +1,5 @@
 import uuid
 
-from cryptography.hazmat.primitives import serialization
-
 from app.services.key_manager_service import KeyManagerService
 from app.services.token_service import TokenService
 
@@ -11,13 +9,7 @@ def test_token_service() -> None:
     key_service = KeyManagerService()
     token_service = TokenService()
 
-    private_key = key_service.private_key.private_bytes(
-        encoding=serialization.Encoding.PEM,
-        format=serialization.PrivateFormat.PKCS8,
-        encryption_algorithm=serialization.NoEncryption(),
-    ).decode("utf-8")
-
-    token = token_service.create_token(owner_id, private_key)
+    token = token_service.create_token(owner_id, key_service.serialize_private_key())
     assert token is not None
     payload = token_service.validation_token(
         token.token, key_service.serialize_public_key(), owner_id
