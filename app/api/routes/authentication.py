@@ -5,6 +5,7 @@ from fastapi import APIRouter, status
 from app.models.public_key import PublicKeyModel
 from app.models.token import TokenModel
 from app.services.key_manager_service import KeyManagerService
+from app.services.token_service import TokenService
 from app.utilities.messages import CREATE_TOKEN_RESPONSES, GET_PUBLIC_KEY_RESPONSES
 
 router = APIRouter()
@@ -32,5 +33,9 @@ async def get_public_key(
     status_code=status.HTTP_201_CREATED,
     responses={**CREATE_TOKEN_RESPONSES},  # type: ignore[dict-item]
 )
-async def generate_token() -> TokenModel:
-    return TokenModel.from_str("")
+async def generate_token(*, user_public_id: uuid.UUID) -> TokenModel:
+    token_service = TokenService()
+    new_token = token_service.create_token(
+        user_public_id, service.serialize_private_key()
+    )
+    return new_token

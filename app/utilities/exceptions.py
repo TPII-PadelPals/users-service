@@ -41,3 +41,12 @@ class ExternalServiceException(HTTPException):
         super().__init__(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=detail
         )
+
+
+class TokenException(HTTPException):
+    def __init__(self, invalid: bool) -> None:
+        if invalid:
+            detail = "Invalid token"
+        else:
+            detail = "Token expired"
+        super().__init__(status_code=status.HTTP_401_UNAUTHORIZED, detail=detail)
