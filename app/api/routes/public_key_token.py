@@ -15,7 +15,7 @@ service = KeyManagerService()
     "/public_key/{user_public_id}",
     response_model=PublicKeyModel,
     status_code=status.HTTP_200_OK,
-    responses={**GET_PUBLIC_KEY_RESPONSES},
+    responses={**GET_PUBLIC_KEY_RESPONSES},  # type: ignore[dict-item]
 )
 async def get_public_key(*, user_public_id: uuid.UUID, user_key: PublicKeyModel):
     service.add_public_key(user_public_id, user_key.key)
@@ -27,7 +27,7 @@ async def get_public_key(*, user_public_id: uuid.UUID, user_key: PublicKeyModel)
     "/token/",
     response_model=PublicKeyModel,
     status_code=status.HTTP_201_CREATED,
-    responses={**CREATE_TOKEN_RESPONSES},
+    responses={**CREATE_TOKEN_RESPONSES},  # type: ignore[dict-item]
 )
 async def generate_token():
     return ""
