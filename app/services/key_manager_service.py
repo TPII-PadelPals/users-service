@@ -29,13 +29,6 @@ class KeyManagerService:
             format=serialization.PublicFormat.SubjectPublicKeyInfo,
         ).decode("utf-8")
 
-    def serialize_private_key(self) -> str:
-        return self.private_key.private_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PrivateFormat.PKCS8,
-            encryption_algorithm=serialization.NoEncryption(),
-        ).decode("utf-8")
-
     def add_public_key(self, user_public_id: uuid.UUID, public_key: str) -> None:
         self.key_storage[user_public_id] = public_key.encode("utf-8")
 

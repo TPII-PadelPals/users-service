@@ -25,3 +25,8 @@ GET_USER_RESPONSES = {
 GET_PUBLIC_KEY_RESPONSES = {status.HTTP_200_OK: {"description": "Public key"}}
 
 CREATE_TOKEN_RESPONSES = {status.HTTP_201_CREATED: {"description": "Token created"}}
+
+GET_VALIDATE_TOKEN = {
+    status.HTTP_200_OK: {"description": "Valid token"},
+    status.HTTP_409_CONFLICT: {"description": "Invalid token"},
+}
