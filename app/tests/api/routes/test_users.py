@@ -16,7 +16,7 @@ async def _create_user(
     name: str,
     email: str,
     phone: str,
-    x_api_key: str,
+    x_api_key: dict[str, str],
 ) -> tuple[Response, dict[str, str]]:
     data = {
         "name": name,

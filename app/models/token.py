@@ -10,4 +10,8 @@ class PublicKeyModel(SQLModel):
 
 
 class TokenModel(SQLModel):
-    token: bytes
+    token: str
+
+    @classmethod
+    def from_str(cls, key: str) -> "TokenModel":
+        return cls(token=key)

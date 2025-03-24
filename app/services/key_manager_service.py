@@ -12,7 +12,7 @@ class KeyManagerService:
     KEY_SIZE = 2048
 
     def __init__(self) -> None:
-        self.key_storage = {}
+        self.key_storage: dict[uuid.UUID, bytes] = {}
         self._generate_key_pair()
 
     def _generate_key_pair(self) -> None:
@@ -33,7 +33,7 @@ class KeyManagerService:
         self.key_storage[user_public_id] = public_key.encode("utf-8")
 
     def get_public_key(self, user_public_id: uuid.UUID) -> str:
-        result = self.key_storage.get(user_public_id).decode("utf-8")
+        result = self.key_storage.get(user_public_id)
         if result is None:
             raise NotFoundException("Public key")
-        return result
+        return result.decode("utf-8")

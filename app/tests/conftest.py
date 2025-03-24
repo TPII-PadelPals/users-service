@@ -36,7 +36,7 @@ async def db() -> AsyncGenerator[AsyncSession, None]:
 
 
 @pytest_asyncio.fixture(autouse=True)
-async def override_dependency(session: AsyncSession):
+async def override_dependency(session: AsyncSession) -> None:
     app.dependency_overrides[get_db] = lambda: session
 
 
