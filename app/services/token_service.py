@@ -20,7 +20,7 @@ class TokenService:
         token = jwt.encode(payload, private_key, algorithm=self.ALGORITHM)
         return TokenModel.from_str(token)
 
-    def decode_token(self, token: str, public_key: str) -> TokenPayload:
+    def _decode_token(self, token: str, public_key: str) -> TokenPayload:
         try:
             decoded = jwt.decode(token, public_key, algorithms=[self.ALGORITHM])
             return TokenPayload(**decoded)
@@ -30,3 +30,11 @@ class TokenService:
             raise TokenException(True)
         except Exception as e:
             raise e
+
+    def validation_token(
+        self, token: str, public_key: str, user_public_id: uuid.UUID
+    ) -> TokenPayload:
+        token_payload = self._decode_token(token, public_key)
+        if not token_payload.is_owner_public_id_in_sub(user_public_id):
+            raise TokenException(True)
+        return token_payload

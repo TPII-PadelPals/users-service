@@ -6,7 +6,6 @@ from app.models.public_key import PublicKeyModel
 from app.models.token import TokenModel, TokenPayload
 from app.services.key_manager_service import KeyManagerService
 from app.services.token_service import TokenService
-from app.utilities.exceptions import TokenException
 from app.utilities.messages import (
     CREATE_TOKEN_RESPONSES,
     GET_PUBLIC_KEY_RESPONSES,
@@ -54,7 +53,5 @@ async def generate_token(*, user_public_id: uuid.UUID) -> TokenModel:
 )
 async def validate_token(*, user_public_id: uuid.UUID, token: str) -> TokenPayload:
     public_key = key_service.serialize_public_key()
-    token_payload = token_service.decode_token(token, public_key)
-    if token_payload.is_owner_public_id_in_sub(user_public_id):
-        raise TokenException(True)
+    token_payload = token_service.validation_token(token, public_key, user_public_id)
     return token_payload

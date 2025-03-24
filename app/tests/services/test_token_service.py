@@ -19,8 +19,8 @@ def test_token_service() -> None:
 
     token = token_service.create_token(owner_id, private_key)
     assert token is not None
-    payload = token_service.decode_token(
-        token.token, key_service.serialize_public_key()
+    payload = token_service.validation_token(
+        token.token, key_service.serialize_public_key(), owner_id
     )
     assert payload is not None
     assert payload.is_owner_public_id_in_sub(owner_id)
