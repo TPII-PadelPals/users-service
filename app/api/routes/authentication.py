@@ -19,15 +19,13 @@ token_service = TokenService()
 
 
 @router.get(
-    "/public_key/{user_public_id}",
+    "/public_key/{user_public_id}/{user_key}",
     response_model=PublicKeyModel,
     status_code=status.HTTP_200_OK,
     responses={**GET_PUBLIC_KEY_RESPONSES},  # type: ignore[dict-item]
 )
-async def get_public_key(
-    *, user_public_id: uuid.UUID, user_key: PublicKeyModel
-) -> PublicKeyModel:
-    key_service.add_public_key(user_public_id, user_key.key)
+async def get_public_key(*, user_public_id: uuid.UUID, user_key: str) -> PublicKeyModel:
+    key_service.add_public_key(user_public_id, user_key)
     response_key = key_service.serialize_public_key()
     return PublicKeyModel.from_str(response_key)
 
