@@ -18,14 +18,16 @@ key_service = KeyManagerService()
 token_service = TokenService()
 
 
-@router.get(
-    "/public_key/{user_public_id}/{user_key}",
+@router.post(
+    "/public_key/{user_public_id}/",
     response_model=PublicKeyModel,
-    status_code=status.HTTP_200_OK,
+    status_code=status.HTTP_201_CREATED,
     responses={**GET_PUBLIC_KEY_RESPONSES},  # type: ignore[dict-item]
 )
-async def get_public_key(*, user_public_id: uuid.UUID, user_key: str) -> PublicKeyModel:
-    key_service.add_public_key(user_public_id, user_key)
+async def handshake_public_key(
+    *, user_public_id: uuid.UUID, user_key: PublicKeyModel
+) -> PublicKeyModel:
+    key_service.add_public_key(user_public_id, user_key.key)
     response_key = key_service.serialize_public_key()
     return PublicKeyModel.from_str(response_key)
 
@@ -44,8 +46,8 @@ async def generate_token(*, user_public_id: uuid.UUID) -> TokenModel:
 
 
 @router.get(
-    "/token/{user_public_id}/{token}",
-    response_model=TokenModel,
+    "/token/{user_public_id}/validate/{token}",
+    response_model=TokenPayload,
     status_code=status.HTTP_200_OK,
     responses={**GET_VALIDATE_TOKEN},  # type: ignore[dict-item]
 )

@@ -16,3 +16,4 @@ def test_token_service() -> None:
     )
     assert payload is not None
     assert payload.is_owner_public_id_in_sub(owner_id)
+    assert payload.sub == str(owner_id)
