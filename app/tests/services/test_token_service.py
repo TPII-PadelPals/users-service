@@ -11,7 +11,7 @@ def test_token_service() -> None:
 
     token = token_service.create_token(owner_id, key_service.serialize_private_key())
     assert token is not None
-    payload = token_service.validation_token(
+    payload = token_service.validate_token(
         token.token, key_service.serialize_public_key(), owner_id
     )
     assert payload is not None

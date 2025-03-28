@@ -8,8 +8,8 @@ from app.services.key_manager_service import KeyManagerService
 from app.services.token_service import TokenService
 from app.utilities.messages import (
     CREATE_TOKEN_RESPONSES,
-    GET_PUBLIC_KEY_RESPONSES,
     GET_VALIDATE_TOKEN,
+    POST_PUBLIC_KEY_RESPONSES,
 )
 
 router = APIRouter()
@@ -22,7 +22,7 @@ token_service = TokenService()
     "/public_key/{user_public_id}/",
     response_model=PublicKeyModel,
     status_code=status.HTTP_201_CREATED,
-    responses={**GET_PUBLIC_KEY_RESPONSES},  # type: ignore[dict-item]
+    responses={**POST_PUBLIC_KEY_RESPONSES},  # type: ignore[dict-item]
 )
 async def handshake_public_key(
     *, user_public_id: uuid.UUID, user_key: PublicKeyModel
@@ -53,5 +53,5 @@ async def generate_token(*, user_public_id: uuid.UUID) -> TokenModel:
 )
 async def validate_token(*, user_public_id: uuid.UUID, token: str) -> TokenPayload:
     public_key = key_service.get_public_key(user_public_id)
-    token_payload = token_service.validation_token(token, public_key, user_public_id)
+    token_payload = token_service.validate_token(token, public_key, user_public_id)
     return token_payload

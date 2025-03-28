@@ -43,10 +43,15 @@ class ExternalServiceException(HTTPException):
         )
 
 
-class TokenException(HTTPException):
-    def __init__(self, invalid: bool) -> None:
-        if invalid:
-            detail = "Invalid token"
-        else:
-            detail = "Token expired"
-        super().__init__(status_code=status.HTTP_401_UNAUTHORIZED, detail=detail)
+class TokenExpiredSignatureException(HTTPException):
+    def __init__(self) -> None:
+        super().__init__(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expired"
+        )
+
+
+class InvalidTokenException(HTTPException):
+    def __init__(self) -> None:
+        super().__init__(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token"
+        )

@@ -4,7 +4,10 @@ import uuid
 import jwt
 
 from app.models.token import TokenModel, TokenPayload
-from app.utilities.exceptions import TokenException
+from app.utilities.exceptions import (
+    InvalidTokenException,
+    TokenExpiredSignatureException,
+)
 
 
 class TokenService:
@@ -25,16 +28,16 @@ class TokenService:
             decoded = jwt.decode(token, public_key, algorithms=[self.ALGORITHM])
             return TokenPayload(**decoded)
         except jwt.ExpiredSignatureError:
-            raise TokenException(False)
+            raise TokenExpiredSignatureException()
         except jwt.InvalidTokenError:
-            raise TokenException(True)
+            raise InvalidTokenException()
         except Exception as e:
             raise e
 
-    def validation_token(
+    def validate_token(
         self, token: str, public_key: str, user_public_id: uuid.UUID
     ) -> TokenPayload:
         token_payload = self._decode_token(token, public_key)
         if not token_payload.is_owner_public_id_in_sub(user_public_id):
-            raise TokenException(True)
+            raise InvalidTokenException()
         return token_payload

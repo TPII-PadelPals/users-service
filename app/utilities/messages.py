@@ -22,7 +22,7 @@ GET_USER_RESPONSES = {
     status.HTTP_404_NOT_FOUND: {"description": "User not found"},
 }
 
-GET_PUBLIC_KEY_RESPONSES = {
+POST_PUBLIC_KEY_RESPONSES = {
     status.HTTP_201_CREATED: {"description": "User Public key saved"}
 }
 
