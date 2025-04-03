@@ -1,6 +1,7 @@
 import uuid
 
 from app.models.user import User, UserCreate, UsersPublic
+from app.repository.paswords_repository import PasswordRepository
 from app.repository.users_repository import UsersRepository
 from app.services.players_service import PlayersService
 from app.utilities.context_managers import service_and_repository_error_handler
@@ -18,6 +19,12 @@ class UsersService:
                 telegram_id=user_dict.get("telegram_id"),
             )
             await session.refresh(user)
+            password = user_in.get_password()
+            if password is not None:
+                password = await PasswordRepository(session).create_password(
+                    user_dict.get("public_id"), password
+                )
+                await session.refresh(password)
             return user
 
     async def read_users(

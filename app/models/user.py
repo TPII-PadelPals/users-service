@@ -8,6 +8,7 @@ from sqlmodel import Field, Index, SQLModel
 from app.utilities.exceptions import InvalidEmailHttpException
 
 EMAIL_VALIDATOR = r"^[\w.-]+@\w+\.\w+(\.\w+)?$"
+USER_TABLE_NAME = "users"
 
 
 # Shared properties
@@ -26,12 +27,15 @@ class UserBase(SQLModel):
 
 # Properties to receive on item creation
 class UserCreate(UserBase):
-    pass
+    password: str | None = Field(default=None)
+
+    def get_password(self) -> str | None:
+        return self.password
 
 
 # Database model, database table inferred from class name
 class User(UserBase, table=True):
-    __tablename__ = "users"
+    __tablename__ = USER_TABLE_NAME
     id: int | None = Field(default=None, primary_key=True)
     public_id: uuid.UUID = Field(default_factory=uuid.uuid4, unique=True)
 
