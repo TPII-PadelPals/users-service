@@ -10,7 +10,7 @@ class PasswordBase(SQLModel):
         default_factory=uuid.uuid4,
         unique=True,
     )
-    password_hash: str = Field(min_length=1, max_length=255)
+    password_hash: str = Field(default=None)
 
 
 class PasswordCreate(PasswordBase):

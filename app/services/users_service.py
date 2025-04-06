@@ -14,17 +14,17 @@ class UsersService:
             repo = UsersRepository(session)
             user = await repo.create_user(user_in)
             user_dict = user.model_dump()
+            password = user_in.get_password()
+            if password:
+                password = await PasswordRepository(session).create_password(
+                    user_dict.get("public_id"), password
+                )
+                await session.refresh(password)
             await PlayersService().create_player(
                 user_public_id=user_dict.get("public_id"),
                 telegram_id=user_dict.get("telegram_id"),
             )
             await session.refresh(user)
-            password = user_in.get_password()
-            if password is not None:
-                password = await PasswordRepository(session).create_password(
-                    user_dict.get("public_id"), password
-                )
-                await session.refresh(password)
             return user
 
     async def read_users(
