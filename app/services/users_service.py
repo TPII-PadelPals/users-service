@@ -1,6 +1,7 @@
 import uuid
 
 from app.models.user import User, UserCreate, UsersPublic
+from app.repository.paswords_repository import PasswordRepository
 from app.repository.users_repository import UsersRepository
 from app.services.players_service import PlayersService
 from app.utilities.context_managers import service_and_repository_error_handler
@@ -13,6 +14,12 @@ class UsersService:
             repo = UsersRepository(session)
             user = await repo.create_user(user_in)
             user_dict = user.model_dump()
+            password = user_in.get_password()
+            if password:
+                password = await PasswordRepository(session).create_password(
+                    user_dict.get("public_id"), password
+                )
+                await session.refresh(password)
             await PlayersService().create_player(
                 user_public_id=user_dict.get("public_id"),
                 telegram_id=user_dict.get("telegram_id"),

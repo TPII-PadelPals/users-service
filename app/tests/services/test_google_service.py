@@ -27,7 +27,9 @@ async def test_google_service_auth(mocker: Any) -> None:
     )
 
 
-async def test_google_service_auth_callback(session: AsyncSession, mocker: Any, monkeypatch) -> None:
+async def test_google_service_auth_callback(
+    session: AsyncSession, mocker: Any, monkeypatch
+) -> None:
     monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
     telegram_id = 123456789
     user_info = {
