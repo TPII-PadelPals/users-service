@@ -22,7 +22,6 @@ class UsersService:
                 await session.refresh(password)
             await PlayersService().create_player(
                 user_public_id=user_dict.get("public_id"),
-                telegram_id=user_dict.get("telegram_id"),
             )
             await session.refresh(user)
             return user
