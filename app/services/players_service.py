@@ -16,11 +16,9 @@ class PlayersService(BaseService):
         )
         self.set_base_headers({"x-api-key": settings.PLAYERS_SERVICE_API_KEY})
 
-    async def create_player(self, user_public_id: UUID, telegram_id: int | None) -> Any:
+    async def create_player(self, user_public_id: UUID) -> Any:
         """Create player using players service."""
         payload = {"user_public_id": str(user_public_id)}
-        if telegram_id:
-            payload["telegram_id"] = int(telegram_id)
         return await self.post(
             "/api/v1/players/",
             json=payload,
