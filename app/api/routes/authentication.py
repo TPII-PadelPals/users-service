@@ -52,6 +52,6 @@ async def generate_token(*, user_public_id: uuid.UUID) -> TokenModel:
     responses={**GET_VALIDATE_TOKEN},  # type: ignore[dict-item]
 )
 async def validate_token(*, user_public_id: uuid.UUID, token: str) -> TokenPayload:
-    public_key = key_service.get_public_key(user_public_id)
+    public_key = key_service.serialize_public_key()
     token_payload = token_service.validate_token(token, public_key, user_public_id)
     return token_payload
