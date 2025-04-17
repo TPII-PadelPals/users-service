@@ -1,0 +1,65 @@
+import pytest
+
+from app.models.user import UserCreate
+from app.utilities.exceptions import InvalidEmailHttpException
+
+
+async def test_create_user_with_multiple_extension_on_email() -> None:
+    user_name = "Robert"
+    user_email = "abbondanzieri@yahoo.com.ar"
+    user_phone = "11 1234 5678"
+
+    user = UserCreate(name=user_name, email=user_email, phone=user_phone)
+
+    assert user.name == user_name
+    assert user.email == user_email
+    assert user.phone == user_phone
+
+
+async def test_create_user_may_contain_telegram_id_as_big_integer() -> None:
+    user_name = "Robert"
+    user_email = "abbondanzieri@yahoo.com.ar"
+    user_phone = "11 1234 5678"
+    telegram_id = 5000400300
+
+    user = UserCreate(
+        name=user_name, email=user_email, phone=user_phone, telegram_id=telegram_id
+    )
+
+    assert user.name == user_name
+    assert user.email == user_email
+    assert user.phone == user_phone
+    assert user.telegram_id == telegram_id
+
+
+async def test_create_user_name_min_size_is_1() -> None:
+    with pytest.raises(ValueError):
+        name = ""
+        UserCreate(name=name, email="name@domain.com", phone="11 1234 5678")
+
+
+async def test_create_user_name_max_length_is_255() -> None:
+    with pytest.raises(ValueError):
+        name = "a" * 256
+        UserCreate(name=name, email="name@domain.com", phone="11 1234 5678")
+
+
+async def test_create_user_without_at_symbol_on_email_raises_error() -> None:
+    with pytest.raises(InvalidEmailHttpException) as e:
+        UserCreate(name="Robert", email="name_without_at.com", phone="11 1234 5678")
+
+    assert e.value.detail == "Invalid email format."
+
+
+async def test_create_user_without_domain_on_email_raises_error() -> None:
+    with pytest.raises(InvalidEmailHttpException) as e:
+        UserCreate(name="Robert", email="abbondanzieri@.com", phone="11 1234 5678")
+
+    assert e.value.detail == "Invalid email format."
+
+
+async def test_create_user_without_extension_on_email_raises_error() -> None:
+    with pytest.raises(InvalidEmailHttpException) as e:
+        UserCreate(name="Robert", email="abbondanzieri@domain.", phone="11 1234 5678")
+
+    assert e.value.detail == "Invalid email format."

@@ -22,12 +22,25 @@ class Settings(BaseSettings):
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
+    POSTGRES_DB_TESTING: str
     API_KEY: str
+
+    # Telegram Bot
+    TELEGRAM_BOT_USERNAME: str
+
+    # Google Services
+    MIDDLEWARE_KEY: str
+    GOOGLE_CLIENT_ID: str
+    GOOGLE_CLIENT_SECRET: str
 
     # Services
     ITEMS_SERVICE_HOST: str
     ITEMS_SERVICE_PORT: int | None = None
     ITEMS_SERVICE_API_KEY: str | None = None
+
+    PLAYERS_SERVICE_HOST: str
+    PLAYERS_SERVICE_PORT: int
+    PLAYERS_SERVICE_API_KEY: str
 
     @computed_field  # type: ignore[prop-decorator]
     @property
@@ -41,6 +54,11 @@ class Settings(BaseSettings):
             path=self.POSTGRES_DB,
         )
 
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def TELEGRAM_PATH(self) -> str:
+        return f"tg://resolve?domain={self.TELEGRAM_BOT_USERNAME}"
+
 
 class TestSettings(Settings):
     @computed_field  # type: ignore[prop-decorator]
@@ -52,7 +70,7 @@ class TestSettings(Settings):
             password=self.POSTGRES_PASSWORD,
             host=self.POSTGRES_SERVER,
             port=self.POSTGRES_PORT_EXT,
-            path=self.POSTGRES_DB + "_test",
+            path=self.POSTGRES_DB_TESTING,
         )
 
 
