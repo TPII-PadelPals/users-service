@@ -19,13 +19,15 @@ token_service = TokenService()
 
 
 @router.post(
-    "/users/{user_email}/public_key",
+    "/users/{user_session_id}/public_key",
     response_model=PublicKey,
     status_code=status.HTTP_201_CREATED,
     responses={**POST_PUBLIC_KEY_RESPONSES},  # type: ignore[dict-item]
 )
-async def handshake_public_key(*, user_email: str, user_key: PublicKey) -> PublicKey:
-    key_service.add_public_key(user_email, user_key.key)
+async def handshake_public_key(
+    *, user_session_id: str, user_key: PublicKey
+) -> PublicKey:
+    key_service.add_public_key(user_session_id, user_key.key)
     response_key = key_service.serialize_public_key()
     return PublicKey.from_str(response_key)
 

@@ -8,7 +8,7 @@ from app.core.config import settings
 async def test_handshake_public_key(
     async_client: AsyncClient, x_api_key_header: dict[str, str]
 ) -> None:
-    user_email = "usuario@email.com"
+    user_session_id = "user_session_id"
     user_public_id = uuid.uuid4()
     public_user_key = "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w...24vbBqIm0bf/oM\nZGVcyI6SERqpW39G33c87KX+CyhtlM+k/Fez+elo9nQiHDDjcfcYMZ6GrN5u/kgW\nnQIDAQAB\n-----END PUBLIC KEY-----\n"
     header = {
@@ -17,7 +17,7 @@ async def test_handshake_public_key(
         "user_key": public_user_key,
     }
     response = await async_client.post(
-        f"{settings.API_V1_STR}/authentication/users/{user_email}/public_key",
+        f"{settings.API_V1_STR}/authentication/users/{user_session_id}/public_key",
         headers=header,
         json={"key": public_user_key},
     )

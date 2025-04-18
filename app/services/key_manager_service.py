@@ -35,11 +35,11 @@ class KeyManagerService:
             encryption_algorithm=serialization.NoEncryption(),
         ).decode("utf-8")
 
-    def add_public_key(self, user_email: str, public_key: str) -> None:
-        self.key_storage[user_email] = public_key.encode("utf-8")
+    def add_public_key(self, user_session_id: str, public_key: str) -> None:
+        self.key_storage[user_session_id] = public_key.encode("utf-8")
 
-    def get_public_key(self, user_email: str) -> str:
-        result = self.key_storage.get(user_email)
+    def get_public_key(self, user_session_id: str) -> str:
+        result = self.key_storage.get(user_session_id)
         if result is None:
             raise NotFoundException("Public key")
         return result.decode("utf-8")
