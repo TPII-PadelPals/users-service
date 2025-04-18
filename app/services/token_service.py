@@ -3,7 +3,8 @@ import uuid
 
 import jwt
 
-from app.models.token import TokenModel, TokenPayload
+from app.core.config import settings
+from app.models.token import Token, TokenPublic
 from app.utilities.exceptions import (
     InvalidTokenException,
     TokenExpiredSignatureException,
@@ -11,22 +12,22 @@ from app.utilities.exceptions import (
 
 
 class TokenService:
-    EXPIRE_TIME: int = 24
-    ALGORITHM: str = "RS256"
+    EXPIRE_TIME: int = settings.TOKEN_EXPIRE_TIME
+    ALGORITHM: str = settings.CIPHER_ALGORITHM
 
-    def create_token(self, user_public_id: uuid.UUID, private_key: str) -> TokenModel:
+    def create_token(self, user_public_id: uuid.UUID, private_key: str) -> Token:
         payload = {
             "sub": str(user_public_id),
             "exp": datetime.datetime.now() + datetime.timedelta(hours=self.EXPIRE_TIME),
             "iat": datetime.datetime.now(),
         }
         token = jwt.encode(payload, private_key, algorithm=self.ALGORITHM)
-        return TokenModel.from_str(token)
+        return Token.from_str(token)
 
-    def _decode_token(self, token: str, public_key: str) -> TokenPayload:
+    def _decode_token(self, token: str, public_key: str) -> TokenPublic:
         try:
             decoded = jwt.decode(token, public_key, algorithms=[self.ALGORITHM])
-            return TokenPayload(**decoded)
+            return TokenPublic(**decoded)
         except jwt.ExpiredSignatureError:
             raise TokenExpiredSignatureException()
         except jwt.InvalidTokenError:
@@ -36,8 +37,8 @@ class TokenService:
 
     def validate_token(
         self, token: str, public_key: str, user_public_id: uuid.UUID
-    ) -> TokenPayload:
+    ) -> TokenPublic:
         token_payload = self._decode_token(token, public_key)
-        if not token_payload.is_owner_public_id_in_sub(user_public_id):
+        if not token_payload.is_in_sub(user_public_id):
             raise InvalidTokenException()
         return token_payload

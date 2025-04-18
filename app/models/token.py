@@ -4,18 +4,18 @@ from datetime import datetime
 from sqlmodel import SQLModel
 
 
-class TokenModel(SQLModel):
+class Token(SQLModel):
     token: str
 
     @classmethod
-    def from_str(cls, key: str) -> "TokenModel":
+    def from_str(cls, key: str) -> "Token":
         return cls(token=key)
 
 
-class TokenPayload(SQLModel):
-    sub: str
-    exp: datetime
-    iat: datetime
+class TokenPublic(SQLModel):
+    sub: str  # Contenido del token (en este caso el uuID)
+    exp: datetime  # Fecha de expiracion del token
+    iat: datetime  # Fecha de creacion del token
 
-    def is_owner_public_id_in_sub(self, owner_public_id: uuid.UUID) -> bool:
+    def is_in_sub(self, owner_public_id: uuid.UUID) -> bool:
         return self.sub == str(owner_public_id)

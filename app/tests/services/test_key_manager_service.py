@@ -1,5 +1,3 @@
-import uuid
-
 from app.services.key_manager_service import KeyManagerService
 
 
@@ -11,10 +9,10 @@ async def test_new_key_manager() -> None:
 
 async def test_key_manager_add_public_key() -> None:
     key_manager = KeyManagerService()
-    user_public_id = uuid.uuid4()
+    user_email = "usuario@email.com"
     new_key = key_manager.serialize_public_key()
     assert new_key is not None
-    key_manager.add_public_key(user_public_id, new_key)
-    key = key_manager.get_public_key(user_public_id)
+    key_manager.add_public_key(user_email, new_key)
+    key = key_manager.get_public_key(user_email)
     assert key is not None
     assert key == new_key

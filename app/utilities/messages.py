@@ -26,9 +26,9 @@ POST_PUBLIC_KEY_RESPONSES = {
     status.HTTP_201_CREATED: {"description": "User Public key saved"}
 }
 
-CREATE_TOKEN_RESPONSES = {status.HTTP_201_CREATED: {"description": "Token created"}}
+POST_TOKEN_RESPONSES = {status.HTTP_201_CREATED: {"description": "Token created"}}
 
-GET_VALIDATE_TOKEN = {
+GET_VALIDATE_TOKEN_RESPONSES = {
     status.HTTP_200_OK: {"description": "Valid token"},
     status.HTTP_409_CONFLICT: {"description": "Invalid token"},
     status.HTTP_404_NOT_FOUND: {"description": "User not found"},

@@ -8,6 +8,7 @@ from app.core.config import settings
 async def test_handshake_public_key(
     async_client: AsyncClient, x_api_key_header: dict[str, str]
 ) -> None:
+    user_email = "usuario@email.com"
     user_public_id = uuid.uuid4()
     public_user_key = "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w...24vbBqIm0bf/oM\nZGVcyI6SERqpW39G33c87KX+CyhtlM+k/Fez+elo9nQiHDDjcfcYMZ6GrN5u/kgW\nnQIDAQAB\n-----END PUBLIC KEY-----\n"
     header = {
@@ -16,7 +17,7 @@ async def test_handshake_public_key(
         "user_key": public_user_key,
     }
     response = await async_client.post(
-        f"{settings.API_V1_STR}/authentication/public_key/{user_public_id}/",
+        f"{settings.API_V1_STR}/authentication/users/{user_email}/public_key",
         headers=header,
         json={"key": public_user_key},
     )
@@ -31,7 +32,7 @@ async def test_new_token(
     user_public_id = uuid.uuid4()
     header = {"user_public_id": str(user_public_id), **x_api_key_header}
     response = await async_client.post(
-        f"{settings.API_V1_STR}/authentication/token/{user_public_id}",
+        f"{settings.API_V1_STR}/authentication/users/{user_public_id}/token",
         headers=header,
         json={"token": "<PASSWORD>"},
     )
@@ -47,7 +48,7 @@ async def test_validate_token(
 
     header_post = {"user_public_id": str(user_public_id), **x_api_key_header}
     response_post = await async_client.post(
-        f"{settings.API_V1_STR}/authentication/token/{user_public_id}",
+        f"{settings.API_V1_STR}/authentication/users/{user_public_id}/token",
         headers=header_post,
         json={"token": "<PASSWORD>"},
     )
@@ -61,7 +62,7 @@ async def test_validate_token(
         "token": token,
     }
     response = await async_client.get(
-        f"{settings.API_V1_STR}/authentication/token/{user_public_id}/validate/{token}",
+        f"{settings.API_V1_STR}/authentication/users/{user_public_id}/token/{token}/validate",
         headers=header_validate,
     )
     assert response.status_code == 200
@@ -79,7 +80,7 @@ async def test_validate_token_invalid_user_id(
 
     header_post = {"user_public_id": str(user_public_id), **x_api_key_header}
     response_post = await async_client.post(
-        f"{settings.API_V1_STR}/authentication/token/{user_public_id}",
+        f"{settings.API_V1_STR}/authentication/users/{user_public_id}/token",
         headers=header_post,
         json={"token": "<PASSWORD>"},
     )
@@ -90,7 +91,7 @@ async def test_validate_token_invalid_user_id(
     user_public_id_2 = uuid.uuid4()
     header_post_2 = {"user_public_id": str(user_public_id_2), **x_api_key_header}
     response_post_2 = await async_client.post(
-        f"{settings.API_V1_STR}/authentication/token/{user_public_id_2}",
+        f"{settings.API_V1_STR}/authentication/users/{user_public_id_2}/token",
         headers=header_post_2,
         json={"token": "<PASSWORD>"},
     )
@@ -102,7 +103,7 @@ async def test_validate_token_invalid_user_id(
         "token": token,
     }
     response = await async_client.get(
-        f"{settings.API_V1_STR}/authentication/token/{user_public_id_2}/validate/{token}",
+        f"{settings.API_V1_STR}/authentication/users/{user_public_id_2}/token/{token}/validate",
         headers=header_validate,
     )
     assert response.status_code == 401

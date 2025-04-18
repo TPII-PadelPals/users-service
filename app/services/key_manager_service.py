@@ -1,18 +1,17 @@
-import uuid
-
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 
+from app.core.config import settings
 from app.utilities.exceptions import NotFoundException
 
 
 class KeyManagerService:
-    PUBLIC_EXPONENT = 65537
-    KEY_SIZE = 2048
+    PUBLIC_EXPONENT = settings.CIPHER_PUBLIC_EXPONENT
+    KEY_SIZE = settings.CIPHER_KEY_SIZE
 
     def __init__(self) -> None:
-        self.key_storage: dict[uuid.UUID, bytes] = {}
+        self.key_storage: dict[str, bytes] = {}
         self._generate_key_pair()
 
     def _generate_key_pair(self) -> None:
@@ -36,11 +35,11 @@ class KeyManagerService:
             encryption_algorithm=serialization.NoEncryption(),
         ).decode("utf-8")
 
-    def add_public_key(self, user_public_id: uuid.UUID, public_key: str) -> None:
-        self.key_storage[user_public_id] = public_key.encode("utf-8")
+    def add_public_key(self, user_email: str, public_key: str) -> None:
+        self.key_storage[user_email] = public_key.encode("utf-8")
 
-    def get_public_key(self, user_public_id: uuid.UUID) -> str:
-        result = self.key_storage.get(user_public_id)
+    def get_public_key(self, user_email: str) -> str:
+        result = self.key_storage.get(user_email)
         if result is None:
             raise NotFoundException("Public key")
         return result.decode("utf-8")
