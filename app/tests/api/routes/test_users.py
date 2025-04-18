@@ -1,4 +1,5 @@
 import uuid
+from typing import Any
 
 from httpx import AsyncClient, Response
 
@@ -15,7 +16,7 @@ async def _create_user(
     name: str,
     email: str,
     phone: str,
-    x_api_key: str,
+    x_api_key: dict[str, str],
 ) -> tuple[Response, dict[str, str]]:
     data = {
         "name": name,
@@ -30,7 +31,7 @@ async def _create_user(
 
 
 async def test_create_user(
-    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch: Any
 ) -> None:
     monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
 
@@ -47,7 +48,7 @@ async def test_create_user(
 
 
 async def test_create_user_raises_external_service_exception(
-    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch: Any
 ) -> None:
     monkeypatch.setattr(
         PlayersService, "create_player", mock_call_player_create_raise_exception
@@ -69,7 +70,7 @@ async def test_create_user_raises_external_service_exception(
 
 
 async def test_create_user_name_min_length_is_1(
-    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch: Any
 ) -> None:
     monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
 
@@ -85,7 +86,7 @@ async def test_create_user_name_min_length_is_1(
 
 
 async def test_create_user_name_max_length_is_255(
-    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch: Any
 ) -> None:
     monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
 
@@ -101,7 +102,7 @@ async def test_create_user_name_max_length_is_255(
 
 
 async def test_create_user_email_already_exists_responds_409(
-    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch: Any
 ) -> None:
     monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
 
@@ -120,7 +121,7 @@ async def test_create_user_email_already_exists_responds_409(
 
 
 async def test_create_user_phone_already_exists_responds_409(
-    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch: Any
 ) -> None:
     monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
 
@@ -147,7 +148,7 @@ async def test_create_user_phone_already_exists_responds_409(
 
 
 async def test_create_user_with_email_without_at_symbol_returns_error(
-    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch: Any
 ) -> None:
     monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
 
@@ -166,7 +167,7 @@ async def test_create_user_with_email_without_at_symbol_returns_error(
 
 
 async def test_create_user_with_email_without_domain_returns_error(
-    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch: Any
 ) -> None:
     monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
 
@@ -185,7 +186,7 @@ async def test_create_user_with_email_without_domain_returns_error(
 
 
 async def test_create_user_with_email_without_extension_returns_error(
-    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch: Any
 ) -> None:
     monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
 
@@ -204,7 +205,7 @@ async def test_create_user_with_email_without_extension_returns_error(
 
 
 async def test_create_user_with_email_with_multiple_extension_on_email(
-    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch: Any
 ) -> None:
     monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
 
@@ -226,7 +227,7 @@ async def test_create_user_with_email_with_multiple_extension_on_email(
 
 
 async def test_read_user(
-    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch: Any
 ) -> None:
     monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
 
@@ -261,7 +262,7 @@ async def test_read_user_not_found(
 
 
 async def test_read_user_not_authorized(
-    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch: Any
 ) -> None:
     monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
 
@@ -282,7 +283,7 @@ async def test_read_user_not_authorized(
 
 
 async def test_read_users(
-    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch: Any
 ) -> None:
     monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
 
@@ -315,7 +316,7 @@ async def test_read_users(
 
 
 async def test_read_users_skip_limit(
-    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch: Any
 ) -> None:
     monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
 
@@ -350,7 +351,7 @@ async def test_read_users_skip_limit(
 
 
 async def test_read_users_skip_limit_defaults(
-    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch: Any
 ) -> None:
     monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
 
@@ -378,7 +379,7 @@ async def test_read_users_skip_limit_defaults(
 
 
 async def test_read_users_telegram_id(
-    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch
+    async_client: AsyncClient, x_api_key_header: dict[str, str], monkeypatch: Any
 ) -> None:
     monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
 
