@@ -1,12 +1,15 @@
 from typing import Any
+
+from fastapi import APIRouter, status
+
 from app.models.login import LoginRequest, LoginResponse
 from app.services.auth_service import AuthService
 from app.utilities.dependencies import SessionDep
-from fastapi import APIRouter, status
 from app.utilities.messages import LOGIN_RESPONSES
 
 router = APIRouter()
 service = AuthService()
+
 
 @router.post(
     "/login",

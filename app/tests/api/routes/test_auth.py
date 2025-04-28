@@ -1,12 +1,11 @@
-import pytest
 from httpx import AsyncClient
 
 from app.core.config import settings
-from app.models.user import UserCreate
 from app.services.players_service import PlayersService
 from app.tests.utils.users import mock_call_player_create
 
-async def test_login_success(async_client: AsyncClient, session, monkeypatch):
+
+async def test_login_success(async_client: AsyncClient, monkeypatch):
     monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
 
     user_data = {
@@ -31,7 +30,8 @@ async def test_login_success(async_client: AsyncClient, session, monkeypatch):
     content = response.json()
     assert "uuid" in content
 
-async def test_login_invalid_credentials(async_client: AsyncClient, session, monkeypatch):
+
+async def test_login_invalid_credentials(async_client: AsyncClient, monkeypatch):
     monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
 
     user_data = {

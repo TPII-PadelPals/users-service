@@ -1,12 +1,12 @@
 import uuid
 
-from app.services.players_service import PlayersService
-from app.tests.utils.users import mock_call_player_create
 import pytest
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.user import UserCreate
 from app.repository.users_repository import UsersRepository
+from app.services.players_service import PlayersService
+from app.tests.utils.users import mock_call_player_create
 from app.utilities.exceptions import NotFoundException, NotUniqueException
 
 
@@ -135,6 +135,7 @@ async def test_get_users(session: AsyncSession) -> None:
         assert user_got.id == user_created.id
         assert user_got.public_id == user_created.public_id
 
+
 async def test_get_user_by_email_found(session, monkeypatch):
     monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
     user_data = {
@@ -145,12 +146,14 @@ async def test_get_user_by_email_found(session, monkeypatch):
         "telegram_id": "1234567899",
     }
     from app.services.users_service import UsersService
+
     user_create = UserCreate(**user_data)
     user = await UsersService().create_user(session, user_create)
     repo = UsersRepository(session)
     found_user = await repo.get_user_by_email(user_data["email"])
     assert found_user.email == user_data["email"]
     assert found_user.public_id == user.public_id
+
 
 async def test_get_user_by_email_not_found(session):
     repo = UsersRepository(session)

@@ -1,9 +1,10 @@
 import pytest
-from app.services.auth_service import AuthService
+
 from app.models.login import LoginRequest
+from app.services.auth_service import AuthService
 from app.services.players_service import PlayersService
-from app.core.config import settings
 from app.tests.utils.users import mock_call_player_create
+
 
 async def test_login_success(session, monkeypatch):
     monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
@@ -16,6 +17,7 @@ async def test_login_success(session, monkeypatch):
     }
     from app.models.user import UserCreate
     from app.services.users_service import UsersService
+
     user_create = UserCreate(**user_data)
     await UsersService().create_user(session, user_create)
     # Try login
@@ -23,6 +25,7 @@ async def test_login_success(session, monkeypatch):
     request = LoginRequest(email=user_data["email"], password=user_data["password"])
     response = await service.login(session, request)
     assert response.uuid is not None
+
 
 async def test_login_invalid_password(session, monkeypatch):
     monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
@@ -35,6 +38,7 @@ async def test_login_invalid_password(session, monkeypatch):
     }
     from app.models.user import UserCreate
     from app.services.users_service import UsersService
+
     user_create = UserCreate(**user_data)
     await UsersService().create_user(session, user_create)
     service = AuthService()

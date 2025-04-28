@@ -1,6 +1,5 @@
 import uuid
 
-from app.utilities.exceptions import NotFoundException
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 

@@ -7,7 +7,6 @@ from app.utilities.exceptions import LoginInvalidCredentialsException
 
 
 class AuthService:
-
     async def login(
         self,
         session: SessionDep,
