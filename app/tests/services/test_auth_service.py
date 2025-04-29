@@ -20,7 +20,6 @@ async def test_login_success(session, monkeypatch):
 
     user_create = UserCreate(**user_data)
     await UsersService().create_user(session, user_create)
-    # Try login
     service = AuthService()
     request = LoginRequest(email=user_data["email"], password=user_data["password"])
     response = await service.login(session, request)
@@ -65,7 +64,6 @@ async def test_login_no_password(session, monkeypatch):
     monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
     user_data = {
         "email": "testuser2@example.com",
-        #"password": "testpass",
         "name": "Test User2",
         "phone": "1234567891",
         "telegram_id": "1234567891",
