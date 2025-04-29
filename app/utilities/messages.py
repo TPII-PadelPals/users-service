@@ -33,3 +33,9 @@ GET_VALIDATE_TOKEN_RESPONSES = {
     status.HTTP_409_CONFLICT: {"description": "Invalid token"},
     status.HTTP_404_NOT_FOUND: {"description": "User not found"},
 }
+
+LOGIN_RESPONSES = {
+    status.HTTP_200_OK: {"description": "User logged in"},
+    status.HTTP_401_UNAUTHORIZED: {"description": "Invalid credentials"},
+    status.HTTP_404_NOT_FOUND: {"description": "User not found"},
+}

@@ -1,5 +1,6 @@
 import uuid
 
+from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.password import Password, PasswordCreate
@@ -15,3 +16,8 @@ class PasswordRepository:
         self.session.add(new_password)
         await self.session.flush()
         return new_password
+
+    async def get_password(self, user_public_id: uuid.UUID) -> Password:
+        statement = select(Password).where(Password.user_public_id == user_public_id)
+        result = await self.session.exec(statement)
+        return result.first()
