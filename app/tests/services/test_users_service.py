@@ -1,3 +1,4 @@
+import hashlib
 from typing import Any
 
 from sqlmodel import select
@@ -27,8 +28,13 @@ async def test_save_password(session: AsyncSession, monkeypatch: Any) -> None:
     statement = select(Password).where(Password.user_public_id == user_public_id)
     result = await session.exec(statement)
     password = result.first()
+
+    hashing = hashlib.sha512()
+    hashing.update(data_user["password"].encode())
+    hash_password = hashing.hexdigest()
+
     assert password is not None
-    assert password.password_hash == "<PASSWORD>"
+    assert password.password_hash == hash_password
     assert password.user_public_id == user_public_id
 
 

@@ -1,5 +1,6 @@
+import hashlib
+
 from app.models.login import LoginRequest, LoginResponse
-from app.models.user import UsersPublic
 from app.repository.paswords_repository import PasswordRepository
 from app.repository.users_repository import UsersRepository
 from app.utilities.dependencies import SessionDep
@@ -11,7 +12,7 @@ class AuthService:
         self,
         session: SessionDep,
         request: LoginRequest,
-    ) -> UsersPublic:
+    ) -> LoginResponse:
         user_repo = UsersRepository(session)
         user = await user_repo.get_user_by_email(request.email)
         passw_repo = PasswordRepository(session)
@@ -20,6 +21,9 @@ class AuthService:
             raise LoginInvalidCredentialsException()
         passw = passw.model_dump()
         password = passw.get("password_hash")
-        if not password or password != request.password:
+        hashing = hashlib.sha512()
+        hashing.update(request.password.encode())
+        hash_password = hashing.hexdigest()
+        if not password or password != hash_password:
             raise LoginInvalidCredentialsException()
         return LoginResponse(uuid=user.public_id)
