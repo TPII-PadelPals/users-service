@@ -25,6 +25,7 @@ async def test_login_success(session, monkeypatch):
     response = await service.login(session, request)
     assert response.uuid is not None
 
+
 async def test_login_invalid_email(session, monkeypatch):
     monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
     user_data = {
@@ -39,6 +40,7 @@ async def test_login_invalid_email(session, monkeypatch):
     with pytest.raises(Exception) as excinfo:
         await service.login(session, request)
     assert "User not found" in str(excinfo.value)
+
 
 async def test_login_invalid_password(session, monkeypatch):
     monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
@@ -59,6 +61,7 @@ async def test_login_invalid_password(session, monkeypatch):
     with pytest.raises(Exception) as excinfo:
         await service.login(session, request)
     assert "Invalid credentials" in str(excinfo.value)
+
 
 async def test_login_no_password(session, monkeypatch):
     monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
