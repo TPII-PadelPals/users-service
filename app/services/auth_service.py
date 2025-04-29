@@ -16,6 +16,8 @@ class AuthService:
         user = await user_repo.get_user_by_email(request.email)
         passw_repo = PasswordRepository(session)
         passw = await passw_repo.get_password(user.public_id)
+        if not passw:
+            raise LoginInvalidCredentialsException()
         passw = passw.model_dump()
         password = passw.get("password_hash")
         if not password or password != request.password:
