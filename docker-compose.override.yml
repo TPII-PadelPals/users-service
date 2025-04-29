@@ -3,6 +3,8 @@ services:
     restart: "no"
     ports:
       - "${POSTGRES_PORT_EXT?Variable not set}:${POSTGRES_PORT?Variable not set}"
+    networks:
+      - tpii-network
 
   users-service:
     restart: "no"
@@ -25,3 +27,14 @@ services:
           action: rebuild
     volumes:
       - ./htmlcov:/app/htmlcov
+    labels:
+      - "traefik.http.routers.google.rule=PathPrefix(`/api/v1/google`)"
+      - "traefik.http.routers.auth.rule=PathPrefix(`/api/v1/auth`)"
+      - "traefik.http.routers.users.rule=PathPrefix(`/api/v1/users`)"
+      - "traefik.http.routers.authentication.rule=PathPrefix(`/api/v1/authentication`)"
+    networks:
+      - tpii-network
+      
+networks:
+  tpii-network:
+    external: true
