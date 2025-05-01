@@ -21,3 +21,21 @@ GET_USER_RESPONSES = {
     status.HTTP_200_OK: {"description": "User recovered"},
     status.HTTP_404_NOT_FOUND: {"description": "User not found"},
 }
+
+POST_PUBLIC_KEY_RESPONSES = {
+    status.HTTP_201_CREATED: {"description": "User Public key saved"}
+}
+
+POST_TOKEN_RESPONSES = {status.HTTP_201_CREATED: {"description": "Token created"}}
+
+GET_VALIDATE_TOKEN_RESPONSES = {
+    status.HTTP_200_OK: {"description": "Valid token"},
+    status.HTTP_409_CONFLICT: {"description": "Invalid token"},
+    status.HTTP_404_NOT_FOUND: {"description": "User not found"},
+}
+
+LOGIN_RESPONSES = {
+    status.HTTP_200_OK: {"description": "User logged in"},
+    status.HTTP_401_UNAUTHORIZED: {"description": "Invalid credentials"},
+    status.HTTP_404_NOT_FOUND: {"description": "User not found"},
+}

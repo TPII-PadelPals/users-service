@@ -42,6 +42,11 @@ class Settings(BaseSettings):
     PLAYERS_SERVICE_PORT: int
     PLAYERS_SERVICE_API_KEY: str
 
+    CIPHER_ALGORITHM: str
+    CIPHER_PUBLIC_EXPONENT: int
+    CIPHER_KEY_SIZE: int
+    TOKEN_EXPIRE_TIME: int
+
     @computed_field  # type: ignore[prop-decorator]
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> MultiHostUrl:

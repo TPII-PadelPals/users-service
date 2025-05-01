@@ -45,3 +45,11 @@ class UsersRepository:
         if not user:
             raise NotFoundException(item="User")
         return user
+
+    async def get_user_by_email(self, email: str) -> User:
+        statement = select(User).where(User.email == email)
+        result = await self.session.exec(statement)
+        user = result.first()
+        if not user:
+            raise NotFoundException(item="User")
+        return user

@@ -1,4 +1,4 @@
-# FastAPI Service Template
+# FastAPI User Service
 
 ## Requirements
 
@@ -42,6 +42,12 @@ fastapi dev --reload app/main.py
 ```
 
 ### With docker
+
+Create `tpii-network` if not already created
+
+```bash
+docker network create tpii-network
+```
 
 Start the local stack with Docker Compose (API + Postgres):
 

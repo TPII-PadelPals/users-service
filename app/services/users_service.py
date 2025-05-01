@@ -1,3 +1,4 @@
+import hashlib
 import uuid
 
 from app.models.user import User, UserCreate, UsersPublic
@@ -16,8 +17,11 @@ class UsersService:
             user_dict = user.model_dump()
             password = user_in.get_password()
             if password:
+                hashing = hashlib.sha512()
+                hashing.update(password.encode())
+                hash_password = hashing.hexdigest()
                 password = await PasswordRepository(session).create_password(
-                    user_dict.get("public_id"), password
+                    user_dict.get("public_id"), hash_password
                 )
                 await session.refresh(password)
             await PlayersService().create_player(
