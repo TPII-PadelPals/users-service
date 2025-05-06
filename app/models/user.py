@@ -1,5 +1,6 @@
 import re
 import uuid
+from typing import Any
 
 from pydantic import field_validator
 from sqlalchemy import BigInteger
@@ -15,11 +16,11 @@ USER_TABLE_NAME = "users"
 class UserBase(SQLModel):
     name: str = Field(min_length=1, max_length=255)
     email: str = Field(unique=True)
-    phone: str = Field(unique=True)
+    phone: str | None = Field(unique=True)
     telegram_id: int | None = Field(default=None, sa_type=BigInteger)
 
     @field_validator("email", mode="before")
-    def validate_email(cls, value):
+    def validate_email(cls, value: Any) -> Any:
         if not re.match(EMAIL_VALIDATOR, value):
             raise InvalidEmailHttpException()
         return value

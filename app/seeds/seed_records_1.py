@@ -1,41 +1,43 @@
 import hashlib
+import uuid
 from typing import Any
 
 from app.models.password import Password
 from app.models.user import User
 
+OWNER_UUID = "1d0c717c-f0ec-4d96-b201-dab75e2b83fe"
 
-class UserFranco:
-    public_id = "1d0c717c-f0ec-4d96-b201-dab75e2b83fe"
+
+class UserSeed:
     password_raw = "123456879"
     _user: User | None = None
 
-    @classmethod
-    def records(cls) -> list[Any]:
-        return cls.user() + cls.password()
+    def __init__(self, name: str, public_id: str | None = None) -> None:
+        if public_id is None:
+            public_id = str(uuid.uuid4())
+        self.user = self._init_user(name, public_id)
+        self.password = self._init_password(public_id)
 
-    @classmethod
-    def user(cls) -> list[Any]:
-        if cls._user:
-            return [cls._user]
-        return [
-            User(
-                name="Jorge",
-                email="jorge@fi.uba.ar",
-                phone="",
-                telegram_id=None,
-                public_id=cls.public_id,
-            )
-        ]
+    def records(self) -> list[Any]:
+        return [self.user, self.password]
 
-    @classmethod
-    def password(cls) -> list[Any]:
+    def _init_user(self, name: str, public_id: str) -> "User":
+        return User(
+            name=name,
+            email=f"{name}@fi.uba.ar",
+            phone=None,
+            telegram_id=None,
+            public_id=public_id,
+        )
+
+    def _init_password(self, public_id: str) -> "Password":
         hashing = hashlib.sha512()
-        hashing.update(cls.password_raw.encode())
+        hashing.update(self.password_raw.encode())
         password_hash = hashing.hexdigest()
-        return [Password(user_public_id=cls.public_id, password_hash=password_hash)]
+        return Password(user_public_id=public_id, password_hash=password_hash)
 
 
 RECORDS: list[Any] = []
 
-RECORDS += UserFranco.records()
+RECORDS += UserSeed("jorge", OWNER_UUID).records()
+RECORDS += UserSeed("adolfo").records()

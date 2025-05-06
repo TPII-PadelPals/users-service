@@ -39,7 +39,7 @@ class GoogleService:
         user_create = UserCreate(
             name=user_info["name"],
             email=user_info["email"],
-            phone="",
+            phone=None,
             telegram_id=telegram_id,
         )
 
