@@ -17,6 +17,6 @@ api_router_with_api_key.include_router(items.router, prefix="/items", tags=["ite
 api_router_with_api_key.include_router(
     items_service.router, prefix="/items-service", tags=["items-service"]
 )
-api_router_with_api_key.include_router(
-    authentication.router, prefix="/authentication", tags=["authentication"]
-)
+# api_router_with_api_key.include_router(
+#     authentication.router, prefix="/authentication", tags=["authentication"]
+# )
