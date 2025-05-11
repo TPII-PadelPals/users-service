@@ -45,7 +45,11 @@ class Settings(BaseSettings):
     CIPHER_ALGORITHM: str
     CIPHER_PUBLIC_EXPONENT: int
     CIPHER_KEY_SIZE: int
+
+    # Token
     TOKEN_EXPIRE_TIME: int
+    TOKEN_ALGORITHM: str
+    TOKEN_SECRET_KEY: str
 
     @computed_field  # type: ignore[prop-decorator]
     @property

@@ -1,10 +1,10 @@
 import uuid
 from datetime import datetime
 
-from sqlmodel import SQLModel
+from pydantic import BaseModel
 
 
-class Token(SQLModel):
+class Token(BaseModel):
     token: str
 
     @classmethod
@@ -12,7 +12,7 @@ class Token(SQLModel):
         return cls(token=key)
 
 
-class TokenPublic(SQLModel):
+class TokenPublic(BaseModel):
     sub: str  # Contenido del token (en este caso el uuID)
     exp: datetime  # Fecha de expiracion del token
     iat: datetime  # Fecha de creacion del token

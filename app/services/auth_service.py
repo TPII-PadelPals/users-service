@@ -3,6 +3,7 @@ import hashlib
 from app.models.login import LoginRequest, LoginResponse
 from app.repository.paswords_repository import PasswordRepository
 from app.repository.users_repository import UsersRepository
+from app.services.token_service import TokenService
 from app.utilities.dependencies import SessionDep
 from app.utilities.exceptions import LoginInvalidCredentialsException
 
@@ -26,4 +27,6 @@ class AuthService:
         hash_password = hashing.hexdigest()
         if not password or password != hash_password:
             raise LoginInvalidCredentialsException()
-        return LoginResponse(uuid=user.public_id)
+        token_service = TokenService()
+        token = token_service.create_token(user.public_id)
+        return LoginResponse(uuid=user.public_id, token=token.token)
