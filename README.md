@@ -7,6 +7,12 @@
 
 ## Workflow
 
+Generar una secret key _(usa la misma con el gateway)_:
+
+```bash
+openssl rand -hex 32
+```
+
 #### Dependencies are managed with **uv**.
 
 Install it by running:
