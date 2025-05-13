@@ -6,10 +6,17 @@ from app.core.config import settings
 from app.models.password import Password
 from app.models.user import User
 
-USER_UUID = "db08d286-58cf-4542-8501-efa273e38be4"
+ASSIGNED_UUID = "db08d286-58cf-4542-8501-efa273e38be4"
+
+SIMILAR_NAMES = ["Benedicto", "Francisco", "Leon"]
+SIMILAR_UUIDS = [
+    "3cbccfa2-65d7-4d49-b801-b7f30daae857",
+    "96ff36d6-bd6e-49c3-a666-cda2d2865be0",
+    "a80a64fb-9672-450c-a98e-bcf366ea6ac8",
+]
 
 
-class CurrentUser:
+class UserSeed:
     password_raw = "123456879"
 
     def __init__(
@@ -48,10 +55,21 @@ class CurrentUser:
 
 RECORDS: list[Any] = []
 
-RECORDS += CurrentUser(
+RECORDS += UserSeed(
     settings.USER_NAME,
     settings.USER_MAIL,
     settings.USER_PHONE,
     settings.USER_TELEGRAM_ID,
-    USER_UUID,
+    ASSIGNED_UUID,
 ).records()
+
+for i, (similar_name, similar_uuid) in enumerate(
+    zip(SIMILAR_NAMES, SIMILAR_UUIDS, strict=False)
+):
+    RECORDS += UserSeed(
+        similar_name,
+        f"{similar_name.lower()}@notamail.com",
+        f"Not a phone number {i}",
+        1000 + i,
+        similar_uuid,
+    ).records()
