@@ -1,9 +1,11 @@
 import hashlib
 
 from app.models.login import LoginRequest, LoginResponse
+from app.models.user import User, UserCreate
 from app.repository.paswords_repository import PasswordRepository
 from app.repository.users_repository import UsersRepository
 from app.services.token_service import TokenService
+from app.services.users_service import UsersService
 from app.utilities.dependencies import SessionDep
 from app.utilities.exceptions import LoginInvalidCredentialsException
 
@@ -30,3 +32,7 @@ class AuthService:
         token_service = TokenService()
         token = token_service.create_token(user.public_id)
         return LoginResponse(uuid=user.public_id, token=token.token)
+
+    async def signup(self, session: SessionDep, user_in: UserCreate) -> User:
+        user_service = UsersService()
+        return await user_service.create_user(session, user_in)
