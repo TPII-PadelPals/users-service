@@ -28,6 +28,12 @@ class Settings(BaseSettings):
     # Telegram Bot
     TELEGRAM_BOT_USERNAME: str
 
+    # User
+    USER_NAME: str
+    USER_MAIL: str
+    USER_PHONE: str
+    USER_TELEGRAM_ID: int
+
     # Google Services
     MIDDLEWARE_KEY: str
     GOOGLE_CLIENT_ID: str
