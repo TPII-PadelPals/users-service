@@ -32,6 +32,10 @@ services:
       - "traefik.http.routers.auth.rule=PathPrefix(`/api/v1/auth`)"
       - "traefik.http.routers.users.rule=PathPrefix(`/api/v1/users`)"
       - "traefik.http.routers.authentication.rule=PathPrefix(`/api/v1/authentication`)"
+      - "traefik.http.routers.google.middlewares=cors,my-easy-traefik-rate-limit-jwt@file"
+      - "traefik.http.routers.auth.middlewares=cors,my-easy-traefik-rate-limit-jwt@file"
+      - "traefik.http.routers.users.middlewares=cors,my-easy-traefik-rate-limit-jwt@file"
+      - "traefik.http.routers.authentication.middlewares=cors,my-easy-traefik-rate-limit-jwt@file"
     networks:
       - tpii-network
       

@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timedelta
 import uuid
 
 import jwt
@@ -13,18 +13,19 @@ from app.utilities.exceptions import (
 
 class TokenService:
     EXPIRE_TIME: int = settings.TOKEN_EXPIRE_TIME
-    ALGORITHM: str = settings.CIPHER_ALGORITHM
+    ALGORITHM: str = settings.TOKEN_ALGORITHM
+    SECRET_KEY: str = settings.TOKEN_SECRET_KEY
 
-    def create_token(self, user_public_id: uuid.UUID, private_key: str) -> Token:
+    def create_token(self, user_public_id: uuid.UUID, secret_key: str = SECRET_KEY) -> Token:
         payload = {
             "sub": str(user_public_id),
-            "exp": datetime.datetime.now() + datetime.timedelta(hours=self.EXPIRE_TIME),
-            "iat": datetime.datetime.now(),
+            "exp": datetime.now() + timedelta(hours=self.EXPIRE_TIME),
+            "iat": datetime.now(),
         }
-        token = jwt.encode(payload, private_key, algorithm=self.ALGORITHM)
+        token = jwt.encode(payload, secret_key, algorithm=self.ALGORITHM)
         return Token.from_str(token)
 
-    def _decode_token(self, token: str, public_key: str) -> TokenPublic:
+    def _decode_token(self, token: str, public_key: str = SECRET_KEY) -> TokenPublic:
         try:
             decoded = jwt.decode(token, public_key, algorithms=[self.ALGORITHM])
             return TokenPublic(**decoded)

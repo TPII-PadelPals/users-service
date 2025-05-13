@@ -10,3 +10,4 @@ class LoginRequest(BaseModel):
 
 class LoginResponse(BaseModel):
     uuid: UUID
+    token: str
