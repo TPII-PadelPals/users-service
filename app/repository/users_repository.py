@@ -13,17 +13,17 @@ class UsersRepository:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-    async def _check_unique_attr(self, attr: Any, value: Any) -> None:
+    async def _check_unique_attr(self, attr: Any, value: Any, message: str) -> None:
         user_attr = getattr(User, attr)
         statement = select(user_attr).where(user_attr == value)
         attr_exist = (await self.session.exec(statement)).first()
         if attr_exist:
-            raise NotUniqueException(item=attr.capitalize())
+            raise NotUniqueException(item=message.capitalize())
 
     async def create_user(self, user_in: UserCreate) -> User:
         user = User.model_validate(user_in)
-        await self._check_unique_attr("email", user.email)
-        await self._check_unique_attr("phone", user.phone)
+        await self._check_unique_attr("email", user.email, "Email")
+        await self._check_unique_attr("phone", user.phone, "Teléfono")
         self.session.add(user)
         await self.session.flush()
         return user
@@ -43,7 +43,7 @@ class UsersRepository:
         result = await self.session.exec(statement)
         user = result.first()
         if not user:
-            raise NotFoundException(item="User")
+            raise NotFoundException(item="Usuario")
         return user
 
     async def get_user_by_email(self, email: str) -> User:
@@ -51,5 +51,5 @@ class UsersRepository:
         result = await self.session.exec(statement)
         user = result.first()
         if not user:
-            raise NotFoundException(item="User")
+            raise NotFoundException(item="Usuario")
         return user

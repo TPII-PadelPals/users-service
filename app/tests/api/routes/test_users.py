@@ -82,7 +82,10 @@ async def test_create_user_name_min_length_is_1(
     assert response.status_code == 422
     content = response.json()
     assert content["detail"][0]["loc"] == ["body", "name"]
-    assert content["detail"][0]["msg"] == "String should have at least 1 character"
+    assert (
+        content["detail"][0]["msg"]
+        == "Value error, La cadena debe tener al menos 1 caracter"
+    )
 
 
 async def test_create_user_name_max_length_is_255(
@@ -98,7 +101,10 @@ async def test_create_user_name_max_length_is_255(
     assert response.status_code == 422
     content = response.json()
     assert content["detail"][0]["loc"] == ["body", "name"]
-    assert content["detail"][0]["msg"] == "String should have at most 255 characters"
+    assert (
+        content["detail"][0]["msg"]
+        == "Value error, La cadena debe tener como máximo 255 caracteres"
+    )
 
 
 async def test_create_user_email_already_exists_responds_409(
@@ -117,7 +123,7 @@ async def test_create_user_email_already_exists_responds_409(
     )
     assert response.status_code == 409
     content = response.json()
-    assert content["detail"] == "Email already exists"
+    assert content["detail"] == "Email ya existe"
 
 
 async def test_create_user_phone_already_exists_responds_409(
@@ -144,7 +150,7 @@ async def test_create_user_phone_already_exists_responds_409(
     )
     assert response.status_code == 409
     content = response.json()
-    assert content["detail"] == "Phone already exists"
+    assert content["detail"] == "Teléfono ya existe"
 
 
 async def test_create_user_with_email_without_at_symbol_returns_error(
@@ -163,7 +169,7 @@ async def test_create_user_with_email_without_at_symbol_returns_error(
     assert response.status_code == 422
     content = response.json()
 
-    assert content["detail"] == "Invalid email format."
+    assert content["detail"] == "Formato de email inválido."
 
 
 async def test_create_user_with_email_without_domain_returns_error(
@@ -182,7 +188,7 @@ async def test_create_user_with_email_without_domain_returns_error(
     assert response.status_code == 422
     content = response.json()
 
-    assert content["detail"] == "Invalid email format."
+    assert content["detail"] == "Formato de email inválido."
 
 
 async def test_create_user_with_email_without_extension_returns_error(
@@ -201,7 +207,7 @@ async def test_create_user_with_email_without_extension_returns_error(
     assert response.status_code == 422
     content = response.json()
 
-    assert content["detail"] == "Invalid email format."
+    assert content["detail"] == "Formato de email inválido."
 
 
 async def test_create_user_with_email_with_multiple_extension_on_email(
@@ -258,7 +264,7 @@ async def test_read_user_not_found(
     )
     assert response.status_code == 404
     content = response.json()
-    assert content["detail"] == "User not found"
+    assert content["detail"] == "No se encontró el usuario"
 
 
 async def test_read_user_not_authorized(
@@ -279,7 +285,7 @@ async def test_read_user_not_authorized(
     )
     assert response.status_code == 401
     content = response.json()
-    assert content["detail"] == "Not Authorized"
+    assert content["detail"] == "No autorizado"
 
 
 async def test_read_users(

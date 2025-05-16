@@ -55,4 +55,4 @@ async def test_login_invalid_credentials(async_client: AsyncClient, monkeypatch)
     )
     assert response.status_code == 401
     content = response.json()
-    assert content["detail"] == "Invalid credentials"
+    assert content["detail"] == "Credenciales inválidas"

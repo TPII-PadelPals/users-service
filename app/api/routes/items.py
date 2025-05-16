@@ -100,4 +100,4 @@ async def delete_item(
     """
     repo = ItemsRepository(session)
     await repo.delete_item(user_id, id)
-    return Message(message="Item deleted successfully")
+    return Message(message="Item eliminado correctamente")

@@ -1,13 +1,13 @@
 from typing import Any
 
-from app.models.user import UserCreate, UserPublic
 from fastapi import APIRouter, status
 
 from app.models.login import LoginRequest, LoginResponse
+from app.models.user import UserCreate, UserPublic
 from app.services.auth_service import AuthService
 from app.utilities.dependencies import SessionDep
-from app.utilities.messages import LOGIN_RESPONSES
 from app.utilities.messages import (
+    LOGIN_RESPONSES,
     POST_USERS_RESPONSES,
 )
 
@@ -21,7 +21,7 @@ auth_service = AuthService()
     status_code=status.HTTP_201_CREATED,
     responses={**POST_USERS_RESPONSES},  # type: ignore[dict-item]
 )
-async def create_user(*, session: SessionDep, user_in: UserCreate) -> Any:
+async def user_signup(*, session: SessionDep, user_in: UserCreate) -> Any:
     """
     User signup.
     """
@@ -34,7 +34,7 @@ async def create_user(*, session: SessionDep, user_in: UserCreate) -> Any:
     status_code=status.HTTP_200_OK,
     responses={**LOGIN_RESPONSES},  # type: ignore[dict-item]
 )
-async def create_user(*, request: LoginRequest, session: SessionDep) -> Any:
+async def user_login(*, request: LoginRequest, session: SessionDep) -> Any:
     """
     User login.
     """

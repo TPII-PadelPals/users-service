@@ -29,6 +29,22 @@ class UserBase(SQLModel):
 class UserCreate(UserBase):
     password: str | None = Field(default=None)
 
+    @field_validator("name", mode="before")
+    @classmethod
+    def name_length(cls, v):
+        if not isinstance(v, str) or len(v) < 1:
+            raise ValueError("La cadena debe tener al menos 1 caracter")
+        if len(v) > 255:
+            raise ValueError("La cadena debe tener como máximo 255 caracteres")
+        return v
+
+    @field_validator("phone", mode="before")
+    @classmethod
+    def phone_length(cls, v):
+        if len(v) > 32:
+            raise ValueError("La cadena debe tener como máximo 32 caracteres")
+        return v
+
     def get_password(self) -> str | None:
         return self.password
 
