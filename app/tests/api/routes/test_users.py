@@ -81,10 +81,10 @@ async def test_create_user_name_min_length_is_1(
     )
     assert response.status_code == 422
     content = response.json()
-    assert content["detail"][0]["loc"] == ["body", "name"]
+    assert content["detail"][0]["loc"] == "name"
     assert (
         content["detail"][0]["msg"]
-        == "Value error, La cadena debe tener al menos 1 caracter"
+        == "El nombre debe tener al menos 1 caracter"
     )
 
 
@@ -100,10 +100,10 @@ async def test_create_user_name_max_length_is_255(
     )
     assert response.status_code == 422
     content = response.json()
-    assert content["detail"][0]["loc"] == ["body", "name"]
+    assert content["detail"][0]["loc"] == "name"
     assert (
         content["detail"][0]["msg"]
-        == "Value error, La cadena debe tener como máximo 255 caracteres"
+        == "El nombre debe tener como máximo 255 caracteres"
     )
 
 
