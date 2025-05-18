@@ -1,5 +1,5 @@
-from datetime import datetime, timedelta
 import uuid
+from datetime import datetime, timedelta
 
 import jwt
 
@@ -16,7 +16,9 @@ class TokenService:
     ALGORITHM: str = settings.TOKEN_ALGORITHM
     SECRET_KEY: str = settings.TOKEN_SECRET_KEY
 
-    def create_token(self, user_public_id: uuid.UUID, secret_key: str = SECRET_KEY) -> Token:
+    def create_token(
+        self, user_public_id: uuid.UUID, secret_key: str = SECRET_KEY
+    ) -> Token:
         payload = {
             "sub": str(user_public_id),
             "exp": datetime.now() + timedelta(hours=self.EXPIRE_TIME),

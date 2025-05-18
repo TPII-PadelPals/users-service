@@ -68,7 +68,7 @@ async def test_create_user_email_already_exists_raises_exception(
         user_create = UserCreate(name="Name Surname", email=email, phone="11 2222 2222")
         await repo.create_user(user_create)
 
-    assert e.value.detail == "Email already exists"
+    assert e.value.detail == "Email ya existe"
 
 
 async def test_create_user_phone_already_exists_raises_exception(
@@ -89,7 +89,7 @@ async def test_create_user_phone_already_exists_raises_exception(
         )
         await repo.create_user(user_create)
 
-    assert e.value.detail == "Phone already exists"
+    assert e.value.detail == "Teléfono ya existe"
 
 
 async def test_get_user(session: AsyncSession) -> None:
@@ -159,4 +159,4 @@ async def test_get_user_by_email_not_found(session):
     repo = UsersRepository(session)
     with pytest.raises(Exception) as excinfo:
         await repo.get_user_by_email("notfound@example.com")
-    assert "User" in str(excinfo.value)
+    assert "404: No se encontró el usuario" in str(excinfo.value)
