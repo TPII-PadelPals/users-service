@@ -70,6 +70,6 @@ for i, (similar_name, similar_uuid) in enumerate(
         similar_name,
         f"{similar_name.lower()}@notamail.com",
         f"Not a phone number {i}",
-        1000 + i,
+        100 + i,
         similar_uuid,
     ).records()
