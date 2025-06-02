@@ -28,6 +28,12 @@ class Settings(BaseSettings):
     # Telegram Bot
     TELEGRAM_BOT_USERNAME: str
 
+    # User
+    USER_NAME: str
+    USER_MAIL: str
+    USER_PHONE: str
+    USER_TELEGRAM_ID: int
+
     # Google Services
     MIDDLEWARE_KEY: str
     GOOGLE_CLIENT_ID: str
@@ -45,7 +51,11 @@ class Settings(BaseSettings):
     CIPHER_ALGORITHM: str
     CIPHER_PUBLIC_EXPONENT: int
     CIPHER_KEY_SIZE: int
+
+    # Token
     TOKEN_EXPIRE_TIME: int
+    TOKEN_ALGORITHM: str
+    TOKEN_SECRET_KEY: str
 
     @computed_field  # type: ignore[prop-decorator]
     @property

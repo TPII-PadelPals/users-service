@@ -7,6 +7,12 @@
 
 ## Workflow
 
+Generar una secret key _(usa la misma con el gateway)_:
+
+```bash
+openssl rand -hex 32
+```
+
 #### Dependencies are managed with **uv**.
 
 Install it by running:
@@ -104,6 +110,10 @@ To run test manually:
 ```bash
 bash scripts/test.sh
 ```
+
+## Seeding DB
+
+Refer to [Seeds README.md](app/seeds/README.md) .
 
 ## VS Code compatibility
 

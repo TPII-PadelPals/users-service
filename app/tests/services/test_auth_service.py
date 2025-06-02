@@ -39,7 +39,7 @@ async def test_login_invalid_email(session, monkeypatch):
     request = LoginRequest(email=user_data["email"], password="wrongpass")
     with pytest.raises(Exception) as excinfo:
         await service.login(session, request)
-    assert "User not found" in str(excinfo.value)
+    assert "404: No se encontró el usuario" in str(excinfo.value)
 
 
 async def test_login_invalid_password(session, monkeypatch):
@@ -60,7 +60,7 @@ async def test_login_invalid_password(session, monkeypatch):
     request = LoginRequest(email=user_data["email"], password="wrongpass")
     with pytest.raises(Exception) as excinfo:
         await service.login(session, request)
-    assert "Invalid credentials" in str(excinfo.value)
+    assert "401: Credenciales inválidas" in str(excinfo.value)
 
 
 async def test_login_no_password(session, monkeypatch):
@@ -80,4 +80,4 @@ async def test_login_no_password(session, monkeypatch):
     request = LoginRequest(email=user_data["email"], password="wrongpass")
     with pytest.raises(Exception) as excinfo:
         await service.login(session, request)
-    assert "Invalid credentials" in str(excinfo.value)
+    assert "401: Credenciales inválidas" in str(excinfo.value)

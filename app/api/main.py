@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from app.api.routes import auth, authentication, google, items, items_service, users
+from app.api.routes import auth, google, items, items_service, users
 from app.utilities.dependencies import get_token_header
 
 api_router_without_api_key = APIRouter()
@@ -17,6 +17,6 @@ api_router_with_api_key.include_router(items.router, prefix="/items", tags=["ite
 api_router_with_api_key.include_router(
     items_service.router, prefix="/items-service", tags=["items-service"]
 )
-api_router_with_api_key.include_router(
-    authentication.router, prefix="/authentication", tags=["authentication"]
-)
+# api_router_with_api_key.include_router(
+#     authentication.router, prefix="/authentication", tags=["authentication"]
+# )
