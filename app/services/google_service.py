@@ -29,7 +29,6 @@ class GoogleService:
     async def auth(self, request: Request, telegram_id: int) -> Any:
         redirect_uri = request.url_for("google_auth_callback")
         print("redirect_uri", redirect_uri)
-        print("request", request)
         return await self.oauth.google.authorize_redirect(
             request, redirect_uri, state=telegram_id, prompt="select_account"
         )

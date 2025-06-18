@@ -9,6 +9,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from app.api.main import api_router_with_api_key, api_router_without_api_key
 from app.core.config import settings
 from app.core.db import init_db
+from app.utilities.middlewares import ProxyHeadersMiddleware
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
@@ -17,7 +18,6 @@ def custom_generate_unique_id(route: APIRoute) -> str:
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):  # type:ignore[no-untyped-def]
-    # await restart_db()
     await init_db()
     yield
 
@@ -31,25 +31,30 @@ app = FastAPI(
 
 
 @app.exception_handler(RequestValidationError)
-async def custom_validation_exception_handler(request: Request, exc: RequestValidationError):
+async def custom_validation_exception_handler(
+    _request: Request, exc: RequestValidationError
+):
     errors = exc.errors()
     custom_errors = []
     for err in errors:
         msg = err.get("msg", "")
         if msg.lower().startswith("value error,"):
-            msg = msg[len("value error,"):].strip()
-        custom_errors.append({
-            "loc": err.get("loc")[-1],
-            "msg": msg,
-            "input": err.get("input"),
-        })
-    return JSONResponse(
-        status_code=422,
-        content={"detail": custom_errors}
-    )
+            msg = msg[len("value error,") :].strip()
+        custom_errors.append(
+            {
+                "loc": err.get("loc")[-1],
+                "msg": msg,
+                "input": err.get("input"),
+            }
+        )
+    return JSONResponse(status_code=422, content={"detail": custom_errors})
+
 
 # Add the SessionMiddleware
 app.add_middleware(SessionMiddleware, secret_key=settings.MIDDLEWARE_KEY)
+
+# Add middleware for Google Authorize Redirect
+app.add_middleware(ProxyHeadersMiddleware)
 
 # Register routes
 app.include_router(api_router_without_api_key, prefix=settings.API_V1_STR)
