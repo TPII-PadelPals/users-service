@@ -9,7 +9,6 @@ from starlette.middleware.sessions import SessionMiddleware
 from app.api.main import api_router_with_api_key, api_router_without_api_key
 from app.core.config import settings
 from app.core.db import init_db
-from app.utilities.middlewares import ProxyHeadersMiddleware
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
@@ -52,9 +51,6 @@ async def custom_validation_exception_handler(
 
 # Add the SessionMiddleware
 app.add_middleware(SessionMiddleware, secret_key=settings.MIDDLEWARE_KEY)
-
-# Add middleware for Google Authorize Redirect
-app.add_middleware(ProxyHeadersMiddleware)
 
 # Register routes
 app.include_router(api_router_without_api_key, prefix=settings.API_V1_STR)
