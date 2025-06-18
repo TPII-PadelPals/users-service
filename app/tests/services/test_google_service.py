@@ -23,7 +23,7 @@ async def test_google_service_auth(mocker: Any) -> None:
     await service.auth(request_mock, telegram_id)
 
     oauth_mock.google.authorize_redirect.assert_called_once_with(
-        request_mock, redirect_uri, state=telegram_id
+        request_mock, redirect_uri, state=telegram_id, prompt="select_account"
     )
 
 
