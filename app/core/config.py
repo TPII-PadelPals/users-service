@@ -71,8 +71,8 @@ class Settings(BaseSettings):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def TELEGRAM_PATH(self) -> str:
-        return f"tg://resolve?domain={self.TELEGRAM_BOT_USERNAME}"
+    def TELEGRAM_BOT_URL(self) -> str:
+        return f"https://t.me/{self.TELEGRAM_BOT_USERNAME}"
 
 
 class TestSettings(Settings):
