@@ -15,7 +15,7 @@ USER_TABLE_NAME = "users"
 class UserBase(SQLModel):
     name: str = Field(min_length=1, max_length=255)
     email: str = Field(unique=True)
-    phone: str = Field(unique=True)
+    phone: str = Field()
     telegram_id: int | None = Field(default=None, sa_type=BigInteger)
 
     @field_validator("email", mode="before")
