@@ -4,6 +4,7 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRoute
+from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
 
 from app.api.main import api_router_with_api_key, api_router_without_api_key
@@ -17,7 +18,6 @@ def custom_generate_unique_id(route: APIRoute) -> str:
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):  # type:ignore[no-untyped-def]
-    # await restart_db()
     await init_db()
     yield
 
@@ -29,24 +29,28 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
+
 
 @app.exception_handler(RequestValidationError)
-async def custom_validation_exception_handler(request: Request, exc: RequestValidationError):
+async def custom_validation_exception_handler(
+    _request: Request, exc: RequestValidationError
+):
     errors = exc.errors()
     custom_errors = []
     for err in errors:
         msg = err.get("msg", "")
         if msg.lower().startswith("value error,"):
-            msg = msg[len("value error,"):].strip()
-        custom_errors.append({
-            "loc": err.get("loc")[-1],
-            "msg": msg,
-            "input": err.get("input"),
-        })
-    return JSONResponse(
-        status_code=422,
-        content={"detail": custom_errors}
-    )
+            msg = msg[len("value error,") :].strip()
+        custom_errors.append(
+            {
+                "loc": err.get("loc")[-1],
+                "msg": msg,
+                "input": err.get("input"),
+            }
+        )
+    return JSONResponse(status_code=422, content={"detail": custom_errors})
+
 
 # Add the SessionMiddleware
 app.add_middleware(SessionMiddleware, secret_key=settings.MIDDLEWARE_KEY)
