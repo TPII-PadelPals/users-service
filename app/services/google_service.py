@@ -1,6 +1,7 @@
 from typing import Any
 
 from fastapi import Request
+from jinja2 import Template
 
 from app.core.config import settings
 from app.models.user import UserCreate
@@ -9,22 +10,16 @@ from app.utilities.dependencies import SessionDep
 
 
 class GoogleService:
-    AUTH_CALLBACK_MSG = f"""
-    <html>
-        <head>
-            <title>Registro exitoso</title>
-        </head>
-        <body>
-            <h1>Registro exitoso!</h1>
-            <button onclick="window.location.href='{settings.TELEGRAM_PATH}'">Volver a telegram</button>
-        </body>
-    </html>
-    """
-
     def __init__(self, oauth: Any):
         self.name = "google-service"
         self.oauth = oauth
         self.users_service = UsersService()
+
+    @staticmethod
+    def get_auth_callback_msg(telegram_url: str):
+        with open("app/templates/welcome.html") as f:
+            template = Template(f.read())
+        return template.render(telegram_url=telegram_url)
 
     async def auth(self, request: Request, telegram_id: int) -> Any:
         redirect_uri = request.url_for("google_auth_callback")
@@ -44,4 +39,4 @@ class GoogleService:
         )
 
         await self.users_service.create_user(session, user_create)
-        return self.AUTH_CALLBACK_MSG
+        return self.get_auth_callback_msg(settings.TELEGRAM_BOT_URL)

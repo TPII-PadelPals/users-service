@@ -4,6 +4,7 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRoute
+from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
 
 from app.api.main import api_router_with_api_key, api_router_without_api_key
@@ -27,6 +28,8 @@ app = FastAPI(
     generate_unique_id_function=custom_generate_unique_id,
     lifespan=lifespan,
 )
+
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 
 @app.exception_handler(RequestValidationError)
