@@ -23,13 +23,18 @@ async def test_google_service_auth(mocker: Any) -> None:
     await service.auth(request_mock, telegram_id)
 
     oauth_mock.google.authorize_redirect.assert_called_once_with(
-        request_mock, redirect_uri, state=telegram_id
+        request_mock, redirect_uri, state=telegram_id, prompt="select_account"
     )
 
 
 async def test_google_service_auth_callback(
     session: AsyncSession, mocker: Any, monkeypatch: Any
 ) -> None:
+    mocker.patch.object(
+        GoogleService,
+        "get_auth_callback_msg",
+        return_value="Fake HTML success register welcome",
+    )
     monkeypatch.setattr(PlayersService, "create_player", mock_call_player_create)
     telegram_id = 123456789
     user_info = {
@@ -50,7 +55,7 @@ async def test_google_service_auth_callback(
     service = GoogleService(oauth_mock)
     result_html = await service.auth_callback(request_mock, session)
 
-    expected_html = GoogleService.AUTH_CALLBACK_MSG
+    expected_html = "Fake HTML success register welcome"
     assert result_html == expected_html
 
     users_repo = UsersRepository(session)

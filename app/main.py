@@ -18,7 +18,6 @@ def custom_generate_unique_id(route: APIRoute) -> str:
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):  # type:ignore[no-untyped-def]
-    # await restart_db()
     await init_db()
     yield
 
