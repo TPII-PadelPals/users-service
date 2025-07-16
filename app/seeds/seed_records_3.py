@@ -7,13 +7,7 @@ from app.models.password import Password
 from app.models.user import User
 
 ASSIGNED_UUID = "db08d286-58cf-4542-8501-efa273e38be4"
-
-SIMILAR_NAMES = ["Benedicto", "Francisco", "Leon"]
-SIMILAR_UUIDS = [
-    "3cbccfa2-65d7-4d49-b801-b7f30daae857",
-    # "96ff36d6-bd6e-49c3-a666-cda2d2865be0",
-    # "a80a64fb-9672-450c-a98e-bcf366ea6ac8",
-]
+SIMILAR_UUID = "3cbccfa2-65d7-4d49-b801-b7f30daae857"
 
 
 class UserSeed:
@@ -63,13 +57,10 @@ RECORDS += UserSeed(
     ASSIGNED_UUID,
 ).records()
 
-for i, (similar_name, similar_uuid) in enumerate(
-    zip(SIMILAR_NAMES, SIMILAR_UUIDS, strict=False)
-):
-    RECORDS += UserSeed(
-        similar_name,
-        f"{similar_name.lower()}@notamail.com",
-        f"Not a phone number {i}",
-        100 + i,
-        similar_uuid,
-    ).records()
+RECORDS += UserSeed(
+    settings.USER_2_NAME,
+    settings.USER_2_MAIL,
+    settings.USER_2_PHONE,
+    settings.USER_2_TELEGRAM_ID,
+    SIMILAR_UUID,
+).records()
