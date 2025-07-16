@@ -34,6 +34,11 @@ class Settings(BaseSettings):
     USER_PHONE: str
     USER_TELEGRAM_ID: int
 
+    USER_2_NAME: str
+    USER_2_MAIL: str
+    USER_2_PHONE: str
+    USER_2_TELEGRAM_ID: int
+
     # Google Services
     MIDDLEWARE_KEY: str
     GOOGLE_CLIENT_ID: str
